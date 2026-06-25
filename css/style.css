@@ -351,36 +351,82 @@ body {
   margin-top: 8px;
 }
 
-.body-parts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 16px;
+/* ===== BODY MAP (SVG) ===== */
+.body-map-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.body-part-btn {
-  padding: 14px 10px;
-  border: 3px solid #0f3460;
-  border-radius: 10px;
-  background: #1a1a2e;
-  color: #eee;
-  font-size: 0.9rem;
+.body-map {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  cursor: pointer;
+  display: block;
+}
+
+.body-part {
+  fill: #1a1a2e;
+  stroke: #0f3460;
+  stroke-width: 2.5;
+  transition: fill 0.15s, stroke 0.15s;
+  cursor: pointer;
+}
+
+.body-part:hover {
+  fill: #533483;
+  stroke: #e94560;
+}
+
+.body-part.selected {
+  fill: #e94560;
+  stroke: #fff;
+  stroke-width: 3;
+}
+
+.body-map-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  justify-content: center;
+  margin-top: 8px;
+  max-width: 200px;
+}
+
+.bml-label {
+  font-size: 0.7rem;
   font-weight: 700;
+  color: #888;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.15s;
-  text-align: center;
-  box-shadow: 3px 3px 0 #0a0a1a;
+  user-select: none;
 }
 
-.body-part-btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 #0a0a1a;
+.bml-label:hover {
+  color: #eee;
+  border-color: #533483;
 }
 
-.body-part-btn.selected {
+.bml-label.selected {
+  color: #fff;
   background: #e94560;
   border-color: #e94560;
-  color: #fff;
+}
+
+.selected-part-display {
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e94560;
+  padding: 6px;
+  margin-top: 4px;
+  min-height: 30px;
 }
 
 .injury-options {
@@ -768,6 +814,156 @@ body {
   font-size: 0.75rem;
   font-weight: 900;
   border: 2px solid #000;
+}
+
+/* ===== CADET PLATOON CHANGE ===== */
+.platoon-change-card {
+  margin-top: 16px;
+}
+
+.cadet-platoon-info {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #aaa;
+  margin-bottom: 4px;
+  padding: 6px 10px;
+  background: #0a0a1a;
+  border-radius: 8px;
+  border: 2px solid #0f3460;
+}
+
+.change-platoon-info {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: #0a0a1a;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.change-platoon-info strong {
+  color: #eee;
+}
+
+.change-platoon-capacity {
+  font-size: 0.8rem;
+  color: #888;
+  text-align: center;
+  margin: 8px 0;
+}
+
+/* ===== PLATOON GROUP (expandable) ===== */
+.platoon-group {
+  margin-bottom: 8px;
+}
+
+.platoon-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  background: #16213e;
+  border: 3px solid #0f3460;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 4px 4px 0 #0a0a1a;
+  user-select: none;
+}
+
+.platoon-group-header:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 #0a0a1a;
+}
+
+.platoon-group-header.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+  box-shadow: 4px 0 0 #0a0a1a;
+}
+
+.platoon-group-toggle {
+  font-size: 0.85rem;
+  width: 20px;
+  text-align: center;
+  color: #e94560;
+  flex-shrink: 0;
+}
+
+.platoon-group-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #eee;
+  flex: 1;
+}
+
+.platoon-group-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #0f3460;
+  color: #aaa;
+  border: 2px solid #0a0a1a;
+  white-space: nowrap;
+}
+
+.platoon-group-count.platoon-warning {
+  background: #f39c12;
+  color: #000;
+  border-color: #000;
+}
+
+.platoon-group-count.platoon-full {
+  background: #c0392b;
+  color: #fff;
+  border-color: #000;
+}
+
+.platoon-group-body {
+  background: #0f3460;
+  border: 3px solid #0f3460;
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  padding: 8px;
+  box-shadow: 4px 4px 0 #0a0a1a;
+}
+
+.platoon-group-body .cadet-card {
+  margin-bottom: 6px;
+  border-width: 2px;
+  box-shadow: 3px 3px 0 #0a0a1a;
+  padding: 12px;
+}
+
+.platoon-group-body .cadet-card:last-child {
+  margin-bottom: 0;
+}
+
+.platoon-group-empty {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+  font-size: 0.85rem;
+}
+
+/* ===== CAPACITY INDICATORS IN PLATOON LIST ===== */
+.capacity-full {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.capacity-warning {
+  color: #f39c12;
+  font-weight: 700;
+}
+
+.platoon-card-actions {
+  margin-top: 4px;
 }
 
 /* ===== CADET RECOVER BUTTON ===== */

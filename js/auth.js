@@ -45,8 +45,75 @@ function toggleAuthMode() {
   } else {
     loginForm.style.display = 'none';
     registerForm.style.display = 'block';
+    // Load platoons when registration form is shown
+    loadPlatoonsForRegistration();
     toggleText.innerHTML = 'Уже есть аккаунт? <a onclick="toggleAuthMode()">Войти</a>';
   }
+}
+
+// Load platoons for registration dropdown
+function loadPlatoonsForRegistration() {
+  const platoonGroup = document.getElementById('reg-platoon-group');
+  if (!platoonGroup) return;
+
+  const select = document.getElementById('reg-platoon');
+  if (!select) return;
+
+  // Check selected role
+  const role = document.getElementById('reg-role').value;
+  if (role !== 'cadet') {
+    platoonGroup.style.display = 'none';
+    return;
+  }
+
+  platoonGroup.style.display = 'block';
+
+  // Show loading
+  select.innerHTML = '<option value="">Загрузка взводов...</option>';
+  select.disabled = true;
+
+  getAllPlatoons().then(platoons => {
+    select.disabled = false;
+
+    if (platoons.length === 0) {
+      select.innerHTML = '<option value="">Нет доступных взводов</option>';
+      // Show manual entry
+      document.getElementById('reg-platoon-manual-group').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('reg-platoon-manual-group').style.display = 'none';
+
+    // Group platoons by instructor name
+    const grouped = {};
+    platoons.forEach(p => {
+      const instructorName = p.instructorName || 'Инструктор';
+      if (!grouped[instructorName]) grouped[instructorName] = [];
+      grouped[instructorName].push(p);
+    });
+
+    let html = '<option value="">Выберите взвод</option>';
+    Object.entries(grouped).forEach(([instructorName, plist]) => {
+      html += `<optgroup label="${instructorName}">`;
+      plist.forEach(p => {
+        const desc = p.description ? ` (${p.description})` : '';
+        html += `<option value="${p.id}">${p.name}${desc}</option>`;
+      });
+      html += '</optgroup>';
+    });
+
+    select.innerHTML = html;
+  }).catch(err => {
+    console.warn('Failed to load platoons:', err);
+    select.disabled = false;
+    select.innerHTML = '<option value="">Ошибка загрузки взводов</option>';
+  });
+}
+
+// Handle role change in registration form
+function onRegRoleChange() {
+  clearAuthError();
+  loadPlatoonsForRegistration();
 }
 
 // Handle login
@@ -102,6 +169,20 @@ function handleRegister(e) {
     return;
   }
 
+  // For cadet, validate platoon selection
+  let platoonId = null;
+  let instructorId = null;
+
+  if (role === 'cadet') {
+    platoonId = document.getElementById('reg-platoon').value;
+    const platoonManual = document.getElementById('reg-platoon-manual').value.trim();
+
+    if (!platoonId && !platoonManual) {
+      showAuthError('Выберите взвод или укажите его название');
+      return;
+    }
+  }
+
   auth.createUserWithEmailAndPassword(email, password)
     .then(result => {
       // Create user profile in Firestore
@@ -119,8 +200,30 @@ function handleRegister(e) {
         userData.injury = { type: '', bodyPart: '', severity: '' };
         userData.lastUpdate = firebase.firestore.FieldValue.serverTimestamp();
         userData.instruction = '';
+        userData.instructionShort = '';
+        userData.instructionScenario = '';
         userData.instructionFrom = '';
         userData.instructionTime = null;
+
+        // Handle platoon
+        if (platoonId) {
+          userData.platoonId = platoonId;
+          // We'll set instructorId after we resolve the platoon
+          return db.collection('platoons').doc(platoonId).get().then(platoonDoc => {
+            if (platoonDoc.exists) {
+              userData.instructorId = platoonDoc.data().instructorId || '';
+            }
+            return db.collection('users').doc(result.user.uid).set(userData);
+          });
+        } else {
+          // Manual platoon name - store as pending
+          const manualPlatoonName = document.getElementById('reg-platoon-manual').value.trim();
+          userData.platoonName = manualPlatoonName;
+          userData.platoonId = '';
+          userData.instructorId = '';
+          userData.platoonPending = true;
+          return db.collection('users').doc(result.user.uid).set(userData);
+        }
       }
 
       return db.collection('users').doc(result.user.uid).set(userData);

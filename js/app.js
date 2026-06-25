@@ -116,10 +116,20 @@ function buildAppShell() {
           </div>
           <div class="form-group">
             <label>Роль</label>
-            <select id="reg-role">
+            <select id="reg-role" onchange="onRegRoleChange()">
               <option value="cadet">Курсант</option>
               <option value="instructor">Инструктор</option>
             </select>
+          </div>
+          <div class="form-group" id="reg-platoon-group" style="display:none">
+            <label>Взвод</label>
+            <select id="reg-platoon">
+              <option value="">Загрузка...</option>
+            </select>
+          </div>
+          <div class="form-group" id="reg-platoon-manual-group" style="display:none">
+            <label>Название взвода (если не нашли в списке)</label>
+            <input type="text" id="reg-platoon-manual" placeholder="Например, 1-й взвод 3-й роты">
           </div>
           <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
         </form>

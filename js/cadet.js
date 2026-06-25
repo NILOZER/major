@@ -132,6 +132,12 @@ function initCadetScreen() {
 
     <button class="btn btn-danger" onclick="openInjuryModal()">Ранен</button>
     <button class="btn btn-success" onclick="setSelfRecovered()" id="cadet-recover-btn">Я здоров</button>
+
+    <div class="card platoon-change-card" style="margin-top:16px">
+      <div style="font-size:0.75rem;text-transform:uppercase;color:#888;margin-bottom:8px;font-weight:700">Мой взвод</div>
+      <div id="cadet-platoon-display" class="cadet-platoon-info">Загрузка...</div>
+      <button class="btn btn-secondary btn-sm" onclick="openChangePlatoonModal()" style="margin-top:8px">Сменить взвод</button>
+    </div>
   `;
 
   // Start listening to cadet data
@@ -139,6 +145,9 @@ function initCadetScreen() {
 
   // Build injury modal
   buildInjuryModal();
+
+  // Build change platoon modal
+  buildChangePlatoonModal();
 }
 
 // Listen to cadet's own data in real-time
@@ -260,11 +269,12 @@ function setSelfRecovered() {
 
 const bodyPartLabels = {
   head: 'Голова',
-  chest: 'Грудь',
-  arm_left: 'Рука левая',
-  arm_right: 'Рука правая',
-  leg_left: 'Нога левая',
-  leg_right: 'Нога правая'
+  neck: 'Шея',
+  chest: 'Туловище',
+  arm_left: 'Левая рука',
+  arm_right: 'Правая рука',
+  leg_left: 'Левая нога',
+  leg_right: 'Правая нога'
 };
 
 function buildInjuryModal() {
@@ -281,11 +291,52 @@ function buildInjuryModal() {
 
       <div class="injury-section">
         <div class="section-label">Часть тела</div>
-        <div class="body-parts" id="body-parts-grid">
-          ${Object.entries(bodyPartLabels).map(([key, label]) =>
-            `<button class="body-part-btn" data-part="${key}" onclick="selectBodyPart('${key}')">${label}</button>`
-          ).join('')}
+        <div class="body-map-container" onclick="handleBodyMapClick(event)">
+          <svg class="body-map" viewBox="0 0 200 480">
+            <!-- HEAD -->
+            <path class="body-part body-head" data-part="head"
+              d="M100,10 C125,10 145,25 145,50 C145,75 130,85 130,85 L70,85 C70,85 55,75 55,50 C55,25 75,10 100,10 Z" />
+            <!-- NECK -->
+            <rect class="body-part body-neck" data-part="neck" x="82" y="85" width="36" height="15" rx="4" />
+            <!-- CHEST / TORSO -->
+            <path class="body-part body-chest" data-part="chest"
+              d="M68,100 L132,100 L135,115 L140,135 L142,155 L138,185 L130,200 L70,200 L62,185 L58,155 L60,135 L65,115 Z" />
+            <!-- LEFT ARM -->
+            <path class="body-part body-arm_left" data-part="arm_left"
+              d="M58,100 L65,115 L62,135 L55,155 L48,170 L40,180 L32,175 L38,158 L44,135 L48,115 L50,100 Z" />
+            <!-- RIGHT ARM -->
+            <path class="body-part body-arm_right" data-part="arm_right"
+              d="M142,100 L135,115 L138,135 L145,155 L152,170 L160,180 L168,175 L162,158 L156,135 L152,115 L150,100 Z" />
+            <!-- LEFT LEG -->
+            <path class="body-part body-leg_left" data-part="leg_left"
+              d="M70,200 L82,200 L85,260 L87,310 L88,350 L85,390 L80,450 L72,455 L64,450 L60,390 L58,350 L56,310 L55,260 L58,200 Z" />
+            <!-- RIGHT LEG -->
+            <path class="body-part body-leg_right" data-part="leg_right"
+              d="M118,200 L130,200 L142,200 L145,260 L144,310 L142,350 L140,390 L136,450 L128,455 L120,450 L115,390 L114,350 L113,310 L112,260 L115,200 Z" />
+            <!-- LEFT HAND -->
+            <ellipse class="body-part body-arm_left" data-part="arm_left" cx="36" cy="182" rx="10" ry="12" />
+            <!-- RIGHT HAND -->
+            <ellipse class="body-part body-arm_right" data-part="arm_right" cx="164" cy="182" rx="10" ry="12" />
+            <!-- LEFT FOOT -->
+            <path class="body-part body-leg_left" data-part="leg_left"
+              d="M62,455 L72,455 L78,460 L80,468 L72,470 L60,470 L55,465 Z" />
+            <!-- RIGHT FOOT -->
+            <path class="body-part body-leg_right" data-part="leg_right"
+              d="M120,450 L136,450 L145,458 L148,468 L140,470 L128,470 L118,465 Z" />
+          </svg>
+          <!-- Labels overlay -->
+          <div class="body-map-labels">
+            <span class="bml-label" data-part="head">Голова</span>
+            <span class="bml-label" data-part="neck">Шея</span>
+            <span class="bml-label" data-part="chest">Туловище</span>
+            <span class="bml-label" data-part="arm_left">Левая рука</span>
+            <span class="bml-label" data-part="arm_right">Правая рука</span>
+            <span class="bml-label" data-part="leg_left">Левая нога</span>
+            <span class="bml-label" data-part="leg_right">Правая нога</span>
+          </div>
         </div>
+        <!-- Selected part display -->
+        <div id="selected-body-part-display" class="selected-part-display">Часть не выбрана</div>
       </div>
 
       <div class="injury-section">
@@ -338,10 +389,15 @@ function openInjuryModal() {
   selectedInjuryType = null;
   selectedSeverity = null;
 
-  // Reset all selections
-  document.querySelectorAll('.body-part-btn').forEach(b => b.classList.remove('selected'));
+  // Reset SVG selections
+  document.querySelectorAll('.body-part').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.bml-label').forEach(el => el.classList.remove('selected'));
   document.querySelectorAll('.injury-opt').forEach(b => b.classList.remove('selected'));
   document.getElementById('submit-injury-btn').disabled = true;
+
+  // Reset display
+  const display = document.getElementById('selected-body-part-display');
+  if (display) display.textContent = 'Часть не выбрана';
 
   document.getElementById('injury-modal').classList.add('active');
 }
@@ -350,10 +406,36 @@ function closeInjuryModal() {
   document.getElementById('injury-modal').classList.remove('active');
 }
 
+function handleBodyMapClick(event) {
+  // Find the closest SVG element with data-part attribute
+  const target = event.target.closest('[data-part]');
+  if (!target) return;
+
+  const part = target.getAttribute('data-part');
+  if (!part) return;
+
+  selectBodyPart(part);
+}
+
 function selectBodyPart(part) {
+  if (!part) return;
+
   selectedBodyPart = part;
-  document.querySelectorAll('.body-part-btn').forEach(b => b.classList.remove('selected'));
-  document.querySelector(`.body-part-btn[data-part="${part}"]`).classList.add('selected');
+
+  // Update SVG visual selection
+  document.querySelectorAll('.body-part').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll(`.body-part[data-part="${part}"]`).forEach(el => el.classList.add('selected'));
+
+  // Update label selection
+  document.querySelectorAll('.bml-label').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll(`.bml-label[data-part="${part}"]`).forEach(el => el.classList.add('selected'));
+
+  // Update display text
+  const display = document.getElementById('selected-body-part-display');
+  if (display) {
+    display.textContent = 'Выбрано: ' + (bodyPartLabels[part] || part);
+  }
+
   checkInjuryForm();
 }
 
@@ -413,5 +495,209 @@ function submitInjury() {
     console.error('Failed to submit injury:', err);
     showError('Ошибка при отправке данных');
     closeInjuryModal();
+  });
+}
+
+// ===== PLATOON CHANGE (for cadet) =====
+
+function buildChangePlatoonModal() {
+  if (document.getElementById('change-platoon-modal')) return;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'change-platoon-modal';
+  overlay.className = 'modal-overlay';
+
+  overlay.innerHTML = `
+    <div class="modal">
+      <h2>Смена взвода</h2>
+
+      <div id="change-platoon-current" class="change-platoon-info">
+        Текущий взвод: <strong id="cp-current-name">-</strong>
+      </div>
+
+      <div class="form-group">
+        <label>Выберите новый взвод</label>
+        <select id="cp-platoon-select">
+          <option value="">Загрузка взводов...</option>
+        </select>
+      </div>
+
+      <div id="cp-platoon-capacity" class="change-platoon-capacity"></div>
+      <div id="cp-error" class="error-msg" style="display:none"></div>
+
+      <button class="btn btn-primary" id="cp-submit-btn" onclick="changePlatoon()">Сменить взвод</button>
+      <button class="btn btn-ghost" onclick="closeChangePlatoonModal()">Отмена</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+}
+
+function openChangePlatoonModal() {
+  // Load current platoon info
+  db.collection('users').doc(currentUser.uid).get().then(doc => {
+    if (!doc.exists) return;
+    const data = doc.data();
+    const currentPlatoonEl = document.getElementById('cp-current-name');
+    if (data.platoonId) {
+      // Try to get platoon name
+      db.collection('platoons').doc(data.platoonId).get().then(pDoc => {
+        if (pDoc.exists) {
+          currentPlatoonEl.textContent = pDoc.data().name || 'Неизвестный взвод';
+        } else {
+          currentPlatoonEl.textContent = data.platoonName || 'Неизвестный взвод';
+        }
+      });
+    } else {
+      currentPlatoonEl.textContent = 'Не прикреплен к взводу';
+    }
+  });
+
+  // Load available platoons
+  loadAvailablePlatoons();
+
+  document.getElementById('change-platoon-modal').classList.add('active');
+}
+
+function closeChangePlatoonModal() {
+  document.getElementById('change-platoon-modal').classList.remove('active');
+}
+
+function loadAvailablePlatoons() {
+  const select = document.getElementById('cp-platoon-select');
+  const capacityEl = document.getElementById('cp-platoon-capacity');
+  const errorEl = document.getElementById('cp-error');
+
+  select.innerHTML = '<option value="">Загрузка...</option>';
+  select.disabled = true;
+  capacityEl.innerHTML = '';
+  errorEl.style.display = 'none';
+
+  getAllPlatoons().then(platoons => {
+    select.disabled = false;
+
+    if (platoons.length === 0) {
+      select.innerHTML = '<option value="">Нет доступных взводов</option>';
+      return;
+    }
+
+    // Get current user data to exclude own platoon
+    db.collection('users').doc(currentUser.uid).get().then(userDoc => {
+      const currentPlatoonId = userDoc.exists ? userDoc.data().platoonId : null;
+
+      // Count cadets per platoon in real-time
+      const counts = {};
+      return db.collection('users')
+        .where('role', '==', 'cadet')
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            const pid = doc.data().platoonId || '__none__';
+            counts[pid] = (counts[pid] || 0) + 1;
+          });
+
+          // Group by instructor
+          const grouped = {};
+          platoons.forEach(p => {
+            if (p.id === currentPlatoonId) return; // exclude current
+            const maxCap = p.maxCadets || 30;
+            const cadetCount = counts[p.id] || 0;
+            if (cadetCount >= maxCap) return; // platoon is full
+
+            const instructorName = p.instructorName || 'Инструктор';
+            if (!grouped[instructorName]) grouped[instructorName] = [];
+            grouped[instructorName].push({ ...p, cadetCount, maxCap });
+          });
+
+          let html = '<option value="">Выберите взвод</option>';
+          Object.entries(grouped).forEach(([instructorName, plist]) => {
+            if (plist.length === 0) return;
+            html += `<optgroup label="${instructorName}">`;
+            plist.forEach(p => {
+              const desc = p.description ? ` (${p.description})` : '';
+              html += `<option value="${p.id}" data-max="${p.maxCap}" data-count="${p.cadetCount}">${p.name}${desc} [${p.cadetCount}/${p.maxCap}]</option>`;
+            });
+            html += '</optgroup>';
+          });
+
+          select.innerHTML = html || '<option value="">Нет доступных взводов</option>';
+
+          // Listen to platoon selection change
+          select.onchange = function() {
+            const selectedOption = select.options[select.selectedIndex];
+            const maxCap = selectedOption?.getAttribute('data-max');
+            const count = selectedOption?.getAttribute('data-count');
+            if (selectedOption && selectedOption.value) {
+              capacityEl.innerHTML = `Заполнено: ${count}/${maxCap}`;
+              errorEl.style.display = 'none';
+            } else {
+              capacityEl.innerHTML = '';
+            }
+          };
+        });
+    });
+  }).catch(err => {
+    console.warn('Failed to load platoons:', err);
+    select.disabled = false;
+    select.innerHTML = '<option value="">Ошибка загрузки</option>';
+  });
+}
+
+function changePlatoon() {
+  if (!currentUser) return;
+
+  const select = document.getElementById('cp-platoon-select');
+  const platoonId = select.value;
+  const errorEl = document.getElementById('cp-error');
+
+  if (!platoonId) {
+    errorEl.textContent = 'Выберите взвод';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  // Double-check capacity
+  db.collection('platoons').doc(platoonId).get().then(pDoc => {
+    if (!pDoc.exists) {
+      errorEl.textContent = 'Взвод не найден';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    const platoonData = pDoc.data();
+    const maxCap = platoonData.maxCadets || 30;
+
+    // Count current cadets in this platoon
+    return db.collection('users')
+      .where('role', '==', 'cadet')
+      .where('platoonId', '==', platoonId)
+      .get()
+      .then(snapshot => {
+        const count = snapshot.size;
+        if (count >= maxCap) {
+          errorEl.textContent = 'Этот взвод уже заполнен. Выберите другой.';
+          errorEl.style.display = 'block';
+          return Promise.reject('Platoon full');
+        }
+
+        // Proceed with change
+        const update = {
+          platoonId: platoonId,
+          instructorId: platoonData.instructorId || '',
+          platoonName: platoonData.name || '',
+          platoonPending: false,
+          lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        return db.collection('users').doc(currentUser.uid).update(update);
+      });
+  }).then(() => {
+    logEvent('platoon_changed', { newPlatoonId: platoonId });
+    closeChangePlatoonModal();
+  }).catch(err => {
+    if (err === 'Platoon full') return;
+    console.error('Failed to change platoon:', err);
+    errorEl.textContent = 'Ошибка смены взвода';
+    errorEl.style.display = 'block';
   });
 }

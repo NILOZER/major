@@ -289,11 +289,22 @@ function setSelfRecovered() {
 const bodyPartLabels = {
   head: 'Голова',
   neck: 'Шея',
-  chest: 'Туловище',
-  arm_left: 'Левая рука',
-  arm_right: 'Правая рука',
-  leg_left: 'Левая нога',
-  leg_right: 'Правая нога'
+  chest: 'Грудная клетка',
+  abdomen: 'Живот',
+  shoulder_left: 'Левое плечо',
+  shoulder_right: 'Правое плечо',
+  forearm_left: 'Левое предплечье',
+  forearm_right: 'Правое предплечье',
+  hand_left: 'Левая кисть',
+  hand_right: 'Правая кисть',
+  thigh_left: 'Левое бедро',
+  thigh_right: 'Правое бедро',
+  knee_left: 'Левое колено',
+  knee_right: 'Правое колено',
+  shin_left: 'Левая голень',
+  shin_right: 'Правая голень',
+  foot_left: 'Левая стопа',
+  foot_right: 'Правая стопа'
 };
 
 function buildInjuryModal() {
@@ -311,47 +322,66 @@ function buildInjuryModal() {
       <div class="injury-section">
         <div class="section-label">Часть тела</div>
         <div class="body-map-container" onclick="handleBodyMapClick(event)">
-          <svg class="body-map" viewBox="0 0 200 480">
-            <!-- HEAD -->
-            <path class="body-part body-head" data-part="head"
-              d="M100,10 C125,10 145,25 145,50 C145,75 130,85 130,85 L70,85 C70,85 55,75 55,50 C55,25 75,10 100,10 Z" />
-            <!-- NECK -->
-            <rect class="body-part body-neck" data-part="neck" x="82" y="85" width="36" height="15" rx="4" />
-            <!-- CHEST / TORSO -->
-            <path class="body-part body-chest" data-part="chest"
-              d="M68,100 L132,100 L135,115 L140,135 L142,155 L138,185 L130,200 L70,200 L62,185 L58,155 L60,135 L65,115 Z" />
-            <!-- LEFT ARM -->
-            <path class="body-part body-arm_left" data-part="arm_left"
-              d="M58,100 L65,115 L62,135 L55,155 L48,170 L40,180 L32,175 L38,158 L44,135 L48,115 L50,100 Z" />
-            <!-- RIGHT ARM -->
-            <path class="body-part body-arm_right" data-part="arm_right"
-              d="M142,100 L135,115 L138,135 L145,155 L152,170 L160,180 L168,175 L162,158 L156,135 L152,115 L150,100 Z" />
-            <!-- LEFT LEG -->
-            <path class="body-part body-leg_left" data-part="leg_left"
-              d="M70,200 L82,200 L85,260 L87,310 L88,350 L85,390 L80,450 L72,455 L64,450 L60,390 L58,350 L56,310 L55,260 L58,200 Z" />
-            <!-- RIGHT LEG -->
-            <path class="body-part body-leg_right" data-part="leg_right"
-              d="M118,200 L130,200 L142,200 L145,260 L144,310 L142,350 L140,390 L136,450 L128,455 L120,450 L115,390 L114,350 L113,310 L112,260 L115,200 Z" />
+          <svg class="body-map" viewBox="0 0 200 520" xmlns="http://www.w3.org/2000/svg">
+            <!-- HEAD: rounded oval -->
+            <ellipse class="body-part body-head" data-part="head" cx="100" cy="28" rx="24" ry="26" />
+            <!-- NECK: trapezoid neck -->
+            <path class="body-part body-neck" data-part="neck" d="M84,54 L116,54 L112,70 L88,70 Z" />
+            <!-- LEFT SHOULDER / UPPER ARM -->
+            <path class="body-part body-shoulder_left" data-part="shoulder_left" d="M48,75 C42,95 38,115 38,130 L46,132 C46,117 50,100 56,82 Z" />
+            <!-- RIGHT SHOULDER / UPPER ARM -->
+            <path class="body-part body-shoulder_right" data-part="shoulder_right" d="M152,75 C158,95 162,115 162,130 L154,132 C154,117 150,100 144,82 Z" />
+            <!-- CHEST: broad upper torso -->
+            <path class="body-part body-chest" data-part="chest" d="M52,72 L148,72 L146,105 L142,125 L138,145 L134,158 L66,158 L62,145 L58,125 L54,105 Z" />
+            <!-- ABDOMEN: lower torso / stomach -->
+            <path class="body-part body-abdomen" data-part="abdomen" d="M66,158 L134,158 L138,170 L140,185 L138,200 L130,215 L70,215 L62,200 L60,185 L62,170 Z" />
+            <!-- LEFT FOREARM -->
+            <path class="body-part body-forearm_left" data-part="forearm_left" d="M38,130 C34,155 32,178 32,200 L40,200 C40,180 42,158 46,132 Z" />
+            <!-- RIGHT FOREARM -->
+            <path class="body-part body-forearm_right" data-part="forearm_right" d="M162,130 C166,155 168,178 168,200 L160,200 C160,180 158,158 154,132 Z" />
             <!-- LEFT HAND -->
-            <ellipse class="body-part body-arm_left" data-part="arm_left" cx="36" cy="182" rx="10" ry="12" />
+            <ellipse class="body-part body-hand_left" data-part="hand_left" cx="36" cy="210" rx="8" ry="12" />
             <!-- RIGHT HAND -->
-            <ellipse class="body-part body-arm_right" data-part="arm_right" cx="164" cy="182" rx="10" ry="12" />
+            <ellipse class="body-part body-hand_right" data-part="hand_right" cx="164" cy="210" rx="8" ry="12" />
+            <!-- LEFT THIGH -->
+            <path class="body-part body-thigh_left" data-part="thigh_left" d="M68,215 C66,240 64,262 64,280 L58,282 C58,260 60,238 62,215 Z" />
+            <path class="body-part body-thigh_left" data-part="thigh_left" d="M70,215 L82,220 L86,260 L84,290 L76,290 L74,260 L68,235 Z" />
+            <!-- RIGHT THIGH -->
+            <path class="body-part body-thigh_right" data-part="thigh_right" d="M132,215 C136,240 138,262 138,280 L144,282 C144,260 142,238 140,215 Z" />
+            <path class="body-part body-thigh_right" data-part="thigh_right" d="M130,215 L118,220 L114,260 L116,290 L124,290 L126,260 L132,235 Z" />
+            <!-- LEFT KNEE -->
+            <path class="body-part body-knee_left" data-part="knee_left" d="M76,290 L84,290 L86,300 L84,310 L76,310 L74,300 Z" />
+            <!-- RIGHT KNEE -->
+            <path class="body-part body-knee_right" data-part="knee_right" d="M124,290 L116,290 L114,300 L116,310 L124,310 L126,300 Z" />
+            <!-- LEFT SHIN / CALF -->
+            <path class="body-part body-shin_left" data-part="shin_left" d="M76,310 C78,330 80,350 80,370 L82,390 L84,420 L76,420 L72,390 L70,370 C68,350 68,330 74,310 Z" />
+            <!-- RIGHT SHIN / CALF -->
+            <path class="body-part body-shin_right" data-part="shin_right" d="M124,310 C122,330 120,350 120,370 L118,390 L116,420 L124,420 L128,390 L130,370 C132,350 132,330 126,310 Z" />
             <!-- LEFT FOOT -->
-            <path class="body-part body-leg_left" data-part="leg_left"
-              d="M62,455 L72,455 L78,460 L80,468 L72,470 L60,470 L55,465 Z" />
+            <path class="body-part body-foot_left" data-part="foot_left" d="M68,420 L92,420 L96,424 L94,432 L84,434 L66,432 L64,428 Z" />
             <!-- RIGHT FOOT -->
-            <path class="body-part body-leg_right" data-part="leg_right"
-              d="M120,450 L136,450 L145,458 L148,468 L140,470 L128,470 L118,465 Z" />
+            <path class="body-part body-foot_right" data-part="foot_right" d="M132,420 L108,420 L104,424 L106,432 L116,434 L134,432 L136,428 Z" />
           </svg>
           <!-- Labels overlay -->
           <div class="body-map-labels">
             <span class="bml-label" data-part="head">Голова</span>
             <span class="bml-label" data-part="neck">Шея</span>
-            <span class="bml-label" data-part="chest">Туловище</span>
-            <span class="bml-label" data-part="arm_left">Левая рука</span>
-            <span class="bml-label" data-part="arm_right">Правая рука</span>
-            <span class="bml-label" data-part="leg_left">Левая нога</span>
-            <span class="bml-label" data-part="leg_right">Правая нога</span>
+            <span class="bml-label" data-part="chest">Грудная клетка</span>
+            <span class="bml-label" data-part="abdomen">Живот</span>
+            <span class="bml-label" data-part="shoulder_left">Левое плечо</span>
+            <span class="bml-label" data-part="shoulder_right">Правое плечо</span>
+            <span class="bml-label" data-part="forearm_left">Левое предплечье</span>
+            <span class="bml-label" data-part="forearm_right">Правое предплечье</span>
+            <span class="bml-label" data-part="hand_left">Левая кисть</span>
+            <span class="bml-label" data-part="hand_right">Правая кисть</span>
+            <span class="bml-label" data-part="thigh_left">Левое бедро</span>
+            <span class="bml-label" data-part="thigh_right">Правое бедро</span>
+            <span class="bml-label" data-part="knee_left">Левое колено</span>
+            <span class="bml-label" data-part="knee_right">Правое колено</span>
+            <span class="bml-label" data-part="shin_left">Левая голень</span>
+            <span class="bml-label" data-part="shin_right">Правая голень</span>
+            <span class="bml-label" data-part="foot_left">Левая стопа</span>
+            <span class="bml-label" data-part="foot_right">Правая стопа</span>
           </div>
         </div>
         <!-- Selected part display -->

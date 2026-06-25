@@ -72,12 +72,28 @@ function loadPlatoonsForRegistration() {
   select.innerHTML = '<option value="">Загрузка взводов...</option>';
   select.disabled = true;
 
-  getAllPlatoons().then(platoons => {
+  Promise.all([
+    getAllPlatoons(),
+    db.collection('users').where('role', '==', 'cadet').get()
+  ]).then(([platoons, cadetSnapshot]) => {
     select.disabled = false;
 
-    if (platoons.length === 0) {
-      select.innerHTML = '<option value="">Нет доступных взводов</option>';
-      // Show manual entry
+    // Count cadets per platoon
+    const counts = {};
+    cadetSnapshot.forEach(doc => {
+      const pid = doc.data().platoonId || '__none__';
+      counts[pid] = (counts[pid] || 0) + 1;
+    });
+
+    // Filter out full platoons
+    const available = platoons.filter(p => {
+      const maxCap = p.maxCadets || 30;
+      const currentCount = counts[p.id] || 0;
+      return currentCount < maxCap;
+    });
+
+    if (available.length === 0) {
+      select.innerHTML = '<option value="">Все взводы заполнены</option>';
       document.getElementById('reg-platoon-manual-group').style.display = 'block';
       return;
     }
@@ -86,10 +102,11 @@ function loadPlatoonsForRegistration() {
 
     // Group platoons by instructor name
     const grouped = {};
-    platoons.forEach(p => {
+    available.forEach(p => {
       const instructorName = p.instructorName || 'Инструктор';
       if (!grouped[instructorName]) grouped[instructorName] = [];
-      grouped[instructorName].push(p);
+      const currentCount = counts[p.id] || 0;
+      grouped[instructorName].push({ ...p, currentCount, maxCap: p.maxCadets || 30 });
     });
 
     let html = '<option value="">Выберите взвод</option>';
@@ -97,7 +114,7 @@ function loadPlatoonsForRegistration() {
       html += `<optgroup label="${instructorName}">`;
       plist.forEach(p => {
         const desc = p.description ? ` (${p.description})` : '';
-        html += `<option value="${p.id}">${p.name}${desc}</option>`;
+        html += `<option value="${p.id}">${p.name}${desc} [${p.currentCount}/${p.maxCap}]</option>`;
       });
       html += '</optgroup>';
     });

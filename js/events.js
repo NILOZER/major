@@ -68,15 +68,19 @@ function logStatusChange(userId, previousStatus, newStatus, changedBy, reason) {
 function getUserEvents(userId, limit = 20) {
   return db.collection('events')
     .where('userId', '==', userId)
-    .orderBy('timestamp', 'desc')
-    .limit(limit)
     .get()
     .then(snapshot => {
       const events = [];
       snapshot.forEach(doc => {
         events.push({ id: doc.id, ...doc.data() });
       });
-      return events;
+      // Sort by timestamp descending in memory to avoid Firestore composite index requirement
+      events.sort((a, b) => {
+        const tA = a.timestamp?.toMillis?.() || 0;
+        const tB = b.timestamp?.toMillis?.() || 0;
+        return tB - tA;
+      });
+      return events.slice(0, limit);
     });
 }
 
@@ -84,15 +88,19 @@ function getUserEvents(userId, limit = 20) {
 function getStatusHistory(userId, limit = 50) {
   return db.collection('statusHistory')
     .where('userId', '==', userId)
-    .orderBy('timestamp', 'desc')
-    .limit(limit)
     .get()
     .then(snapshot => {
       const history = [];
       snapshot.forEach(doc => {
         history.push({ id: doc.id, ...doc.data() });
       });
-      return history;
+      // Sort by timestamp descending in memory to avoid Firestore composite index requirement
+      history.sort((a, b) => {
+        const tA = a.timestamp?.toMillis?.() || 0;
+        const tB = b.timestamp?.toMillis?.() || 0;
+        return tB - tA;
+      });
+      return history.slice(0, limit);
     });
 }
 

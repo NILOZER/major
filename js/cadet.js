@@ -177,6 +177,25 @@ function listenToCadetData() {
         recoverBtn.style.display = (data.status && data.status !== 'healthy') ? 'flex' : 'none';
       }
 
+      // Update platoon info
+      const platoonEl = document.getElementById('cadet-platoon-display');
+      if (data.platoonId) {
+        db.collection('platoons').doc(data.platoonId).get().then(pDoc => {
+          if (pDoc.exists) {
+            const pData = pDoc.data();
+            platoonEl.innerHTML = `<strong>${pData.name}</strong>${pData.description ? '<br><span style="font-size:0.8rem;color:#888">' + pData.description + '</span>' : ''}`;
+          } else {
+            platoonEl.textContent = data.platoonName || 'Взвод удалён';
+          }
+        }).catch(() => {
+          platoonEl.textContent = data.platoonName || 'Взвод удалён';
+        });
+      } else if (data.platoonName) {
+        platoonEl.textContent = data.platoonName + ' (ожидает назначения)';
+      } else {
+        platoonEl.textContent = 'Не прикреплен к взводу';
+      }
+
       // Update instruction - For cadet show DETAILED version
       const instrEl = document.getElementById('cadet-instruction');
       if (data.instruction) {

@@ -7,7 +7,7 @@ let selectedSeverity = null;
 let bodyChartInstance = null;
 let currentChartView = 'FRONT';
 
-// ===== BODY MUSCLES MAPPING =====
+// ===== BODY MUSCLES MAPPING (FRONT VIEW) =====
 // Maps body-muscles library muscle IDs → our simplified body part keys
 const BODY_MUSCLES_MAP = {
   head: ['head', 'face', 'head-back', 'nape'],
@@ -44,18 +44,55 @@ const BODY_MUSCLES_MAP = {
   foot_right: ['foot-right', 'foot-back-right']
 };
 
-// Build reverse lookup: muscleId → our bodyPartKey
-const MUSCLE_TO_BODYPART = {};
-for (const [part, muscles] of Object.entries(BODY_MUSCLES_MAP)) {
-  for (const m of muscles) {
-    MUSCLE_TO_BODYPART[m] = part;
+// ===== BODY MUSCLES MAPPING (BACK VIEW) =====
+// Maps body-muscles library muscle IDs → back-specific body part keys
+const BODY_MUSCLES_MAP_BACK = {
+  head_back: ['head-back', 'nape'],
+  neck_back: ['neck-left', 'neck-right'],
+  upper_back: ['traps-upper-left', 'traps-upper-right', 'traps-mid-left', 'traps-mid-right', 'spine'],
+  mid_back: [
+    'lats-upper-left', 'lats-upper-right', 'lats-mid-left', 'lats-mid-right',
+    'lats-lower-left', 'lats-lower-right', 'traps-lower-left', 'traps-lower-right',
+    'serratus-anterior-left', 'serratus-anterior-right'
+  ],
+  lower_back: ['lower-back-erectors-left', 'lower-back-erectors-right', 'lower-back-ql-left', 'lower-back-ql-right'],
+  glutes: ['gluteus-medius-left', 'gluteus-medius-right', 'gluteus-maximus-left', 'gluteus-maximus-right'],
+  shoulder_back_left: ['deltoid-rear-left', 'triceps-long-left', 'triceps-lateral-left'],
+  shoulder_back_right: ['deltoid-rear-right', 'triceps-long-right', 'triceps-lateral-right'],
+  forearm_back_left: ['forearm-extensors-left', 'elbow-left'],
+  forearm_back_right: ['forearm-extensors-right', 'elbow-right'],
+  hand_back_left: ['hand-back-left'],
+  hand_back_right: ['hand-back-right'],
+  thigh_back_left: ['hamstrings-medial-left', 'hamstrings-lateral-left'],
+  thigh_back_right: ['hamstrings-medial-right', 'hamstrings-lateral-right'],
+  knee_back_left: ['knee-back-left'],
+  knee_back_right: ['knee-back-right'],
+  calf_left: ['calves-gastroc-medial-left', 'calves-gastroc-lateral-left', 'calves-soleus-left'],
+  calf_right: ['calves-gastroc-medial-right', 'calves-gastroc-lateral-right', 'calves-soleus-right'],
+  foot_back_left: ['foot-back-left'],
+  foot_back_right: ['foot-back-right']
+};
+
+// Build reverse lookup: muscleId → our bodyPartKey (will be rebuilt on view toggle)
+let MUSCLE_TO_BODYPART = {};
+
+function rebuildMuscleToBodypart() {
+  const map = currentChartView === 'FRONT' ? BODY_MUSCLES_MAP : BODY_MUSCLES_MAP_BACK;
+  MUSCLE_TO_BODYPART = {};
+  for (const [part, muscles] of Object.entries(map)) {
+    for (const m of muscles) {
+      MUSCLE_TO_BODYPART[m] = part;
+    }
   }
 }
 
 // All muscle IDs in the library (for bodyState initialization)
 const ALL_MUSCLE_IDS = [...new Set(Object.values(BODY_MUSCLES_MAP).flat())];
+// Include any back-unique muscles (none in practice, but be safe)
+const ALL_MUSCLE_IDS_BACK = [...new Set(Object.values(BODY_MUSCLES_MAP_BACK).flat())];
+const ALL_MUSCLE_COMBINED = [...new Set([...ALL_MUSCLE_IDS, ...ALL_MUSCLE_IDS_BACK])];
 
-// Russian labels for body parts
+// Russian labels for body parts — FRONT VIEW
 const bodyPartLabels = {
   head: 'Голова',
   neck: 'Шея',
@@ -76,6 +113,40 @@ const bodyPartLabels = {
   foot_left: 'Левая стопа',
   foot_right: 'Правая стопа'
 };
+
+// Russian labels for body parts — BACK VIEW
+const bodyPartLabelsBack = {
+  head_back: 'Затылок',
+  neck_back: 'Задняя часть шеи',
+  upper_back: 'Верх спины',
+  mid_back: 'Средняя часть спины',
+  lower_back: 'Поясница',
+  glutes: 'Ягодицы',
+  shoulder_back_left: 'Задняя часть левого плеча',
+  shoulder_back_right: 'Задняя часть правого плеча',
+  forearm_back_left: 'Задняя часть левого предплечья',
+  forearm_back_right: 'Задняя часть правого предплечья',
+  hand_back_left: 'Тыльная сторона левой кисти',
+  hand_back_right: 'Тыльная сторона правой кисти',
+  thigh_back_left: 'Задняя часть левого бедра',
+  thigh_back_right: 'Задняя часть правого бедра',
+  knee_back_left: 'Левая подколенная ямка',
+  knee_back_right: 'Правая подколенная ямка',
+  calf_left: 'Левая икра',
+  calf_right: 'Правая икра',
+  foot_back_left: 'Задняя часть левой стопы',
+  foot_back_right: 'Задняя часть правой стопы'
+};
+
+// Get current labels based on view
+function getCurrentLabels() {
+  return currentChartView === 'FRONT' ? bodyPartLabels : bodyPartLabelsBack;
+}
+
+// Get current muscles map based on view
+function getCurrentMusclesMap() {
+  return currentChartView === 'FRONT' ? BODY_MUSCLES_MAP : BODY_MUSCLES_MAP_BACK;
+}
 
 // Scenario-based instructions
 const INSTRUCTION_SCENARIOS = {
@@ -220,6 +291,9 @@ function initCadetScreen() {
 
   // Build change platoon modal
   buildChangePlatoonModal();
+
+  // Initialize muscle->bodypart reverse lookup
+  rebuildMuscleToBodypart();
 }
 
 // Listen to cadet's own data in real-time
@@ -360,16 +434,17 @@ function setSelfRecovered() {
 
 function buildEmptyBodyState() {
   const state = {};
-  for (const id of ALL_MUSCLE_IDS) {
+  for (const id of ALL_MUSCLE_COMBINED) {
     state[id] = BodyMuscles.createBodyPartState(0, false);
   }
   return state;
 }
 
 function getSelectedBodyState() {
+  const map = getCurrentMusclesMap();
   const state = buildEmptyBodyState();
   if (selectedBodyPart) {
-    const muscles = BODY_MUSCLES_MAP[selectedBodyPart] || [];
+    const muscles = map[selectedBodyPart] || [];
     for (const m of muscles) {
       if (state[m]) {
         state[m] = BodyMuscles.createBodyPartState(0, true);
@@ -386,6 +461,28 @@ function toggleBodyChartView() {
   // Update view toggle buttons
   document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`.view-toggle-btn[data-view="${currentChartView}"]`).classList.add('active');
+
+  // Rebuild reverse lookup for new view
+  rebuildMuscleToBodypart();
+
+  // If the currently selected body part doesn't exist in this view, clear selection
+  const labels = getCurrentLabels();
+  if (selectedBodyPart && !labels[selectedBodyPart]) {
+    selectedBodyPart = null;
+  }
+
+  // Rebuild text labels below chart
+  buildBodyChartLabels();
+
+  // Update display text
+  const display = document.getElementById('selected-body-part-display');
+  if (display) {
+    if (selectedBodyPart) {
+      display.textContent = 'Выбрано: ' + (labels[selectedBodyPart] || selectedBodyPart);
+    } else {
+      display.textContent = 'Часть не выбрана';
+    }
+  }
 
   // Update the chart view while preserving selection state
   bodyChartInstance.update({ view: currentChartView, bodyState: getSelectedBodyState() });
@@ -484,6 +581,9 @@ function initBodyChart() {
   // Clear any previous content
   container.innerHTML = '';
 
+  // Rebuild reverse lookup for current view
+  rebuildMuscleToBodypart();
+
   // Build labels
   buildBodyChartLabels();
 
@@ -513,8 +613,9 @@ function buildBodyChartLabels() {
   const labelsContainer = document.getElementById('body-chart-labels');
   if (!labelsContainer) return;
 
+  const labels = getCurrentLabels();
   labelsContainer.innerHTML = '';
-  for (const [part, label] of Object.entries(bodyPartLabels)) {
+  for (const [part, label] of Object.entries(labels)) {
     const span = document.createElement('span');
     span.className = 'bml-label' + (part === selectedBodyPart ? ' selected' : '');
     span.dataset.part = part;
@@ -560,6 +661,9 @@ function selectBodyPart(part) {
 
   selectedBodyPart = part;
 
+  // Get current labels for display
+  const labels = getCurrentLabels();
+
   // Update text labels below chart
   document.querySelectorAll('.bml-label').forEach(el => el.classList.remove('selected'));
   document.querySelectorAll(`.bml-label[data-part="${part}"]`).forEach(el => el.classList.add('selected'));
@@ -567,7 +671,7 @@ function selectBodyPart(part) {
   // Update display text
   const display = document.getElementById('selected-body-part-display');
   if (display) {
-    display.textContent = 'Выбрано: ' + (bodyPartLabels[part] || part);
+    display.textContent = 'Выбрано: ' + (labels[part] || part);
   }
 
   // Update BodyChart selection
@@ -600,11 +704,14 @@ function checkInjuryForm() {
 function submitInjury() {
   if (!selectedBodyPart || !selectedInjuryType || !selectedSeverity || !currentUser) return;
 
+  const labels = getCurrentLabels();
+
   const injuryData = {
     type: selectedInjuryType.label,
     category: selectedInjuryType.category,
-    bodyPart: bodyPartLabels[selectedBodyPart] || selectedBodyPart,
+    bodyPart: labels[selectedBodyPart] || selectedBodyPart,
     bodyPartKey: selectedBodyPart,
+    bodyView: currentChartView,
     severity: selectedSeverity.label,
     severityKey: selectedSeverity.severity
   };

@@ -971,6 +971,60 @@ body {
   margin-top: 4px;
 }
 
+/* ===== PLATOON CADET ROW (inline list in platoon card) ===== */
+.platoon-cadet-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid #0f3460;
+}
+
+.platoon-cadet-row:last-child {
+  border-bottom: none;
+}
+
+.platoon-cadet-name {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #eee;
+  cursor: pointer;
+}
+
+.platoon-cadet-name:hover {
+  color: #e94560;
+}
+
+.platoon-cadet-status {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  border: 2px solid #000;
+}
+
+.platoon-cadet-status.healthy {
+  background: #2ecc71;
+  color: #000;
+}
+
+.platoon-cadet-status.warning {
+  background: #f39c12;
+  color: #000;
+}
+
+.platoon-cadet-status.injured {
+  background: #e67e22;
+  color: #000;
+}
+
+.platoon-cadet-status.critical {
+  background: #c0392b;
+  color: #fff;
+}
+
 /* ===== LOGOUT BUTTON ===== */
 .logout-btn {
   position: fixed;

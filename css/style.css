@@ -310,6 +310,60 @@ body {
   margin: 0;
 }
 
+/* ===== BODY CHART (body-muscles library) ===== */
+.injury-modal-wide {
+  max-width: 520px;
+}
+
+.body-chart-container-inmodal {
+  position: relative;
+  width: 100%;
+  min-height: 240px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.body-chart-container-inmodal .body-chart-container {
+  padding: 0 !important;
+}
+
+.body-chart-container-inmodal .body-chart-svg {
+  max-height: 50vh;
+  max-width: 320px;
+}
+
+.body-chart-view-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  justify-content: center;
+}
+
+.view-toggle-btn {
+  padding: 6px 18px;
+  border: 2px solid #0f3460;
+  border-radius: 8px;
+  background: #1a1a2e;
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-transform: uppercase;
+}
+
+.view-toggle-btn.active {
+  background: #e94560;
+  border-color: #e94560;
+  color: #fff;
+}
+
+.view-toggle-btn:hover:not(.active) {
+  border-color: #533483;
+  color: #ccc;
+}
+
 /* ===== INJURY MODAL ===== */
 .modal-overlay {
   display: none;
@@ -393,7 +447,7 @@ body {
   gap: 4px 8px;
   justify-content: center;
   margin-top: 8px;
-  max-width: 200px;
+  max-width: 100%;
 }
 
 .bml-label {

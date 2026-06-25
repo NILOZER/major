@@ -1,4 +1,4 @@
-// ===== EVENTS MODULE =====
+// ===== EVENTS & STATUS HISTORY MODULE =====
 
 // Log an event to Firestore
 function logEvent(type, payload) {
@@ -28,6 +28,42 @@ function logEvent(type, payload) {
   });
 }
 
+// Log a status change to the statusHistory collection
+function logStatusChange(userId, previousStatus, newStatus, changedBy, reason) {
+  const record = {
+    userId: userId,
+    previousStatus: previousStatus,
+    newStatus: newStatus,
+    changedBy: changedBy || currentUser?.uid || 'unknown',
+    changedByName: currentUser?.displayName || '',
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    reason: reason || ''
+  };
+
+  // Try to get changer name
+  if (currentUser) {
+    db.collection('users').doc(currentUser.uid).get().then(doc => {
+      if (doc.exists) {
+        record.changedByName = doc.data().name || '';
+      }
+      db.collection('statusHistory').add(record).catch(err => {
+        console.warn('Failed to log status change:', err);
+      });
+    }).catch(() => {
+      db.collection('statusHistory').add(record).catch(err => {
+        console.warn('Failed to log status change:', err);
+      });
+    });
+  } else {
+    db.collection('statusHistory').add(record).catch(err => {
+      console.warn('Failed to log status change:', err);
+    });
+  }
+
+  // Also log as event for backward compat
+  logEvent('status_change', { previousStatus, newStatus, reason });
+}
+
 // Get events for a specific user
 function getUserEvents(userId, limit = 20) {
   return db.collection('events')
@@ -44,6 +80,22 @@ function getUserEvents(userId, limit = 20) {
     });
 }
 
+// Get status history for a specific user
+function getStatusHistory(userId, limit = 50) {
+  return db.collection('statusHistory')
+    .where('userId', '==', userId)
+    .orderBy('timestamp', 'desc')
+    .limit(limit)
+    .get()
+    .then(snapshot => {
+      const history = [];
+      snapshot.forEach(doc => {
+        history.push({ id: doc.id, ...doc.data() });
+      });
+      return history;
+    });
+}
+
 // Listen to all events (for instructor)
 function listenToAllEvents(callback) {
   return db.collection('events')
@@ -57,5 +109,33 @@ function listenToAllEvents(callback) {
       callback(events);
     }, err => {
       console.warn('Events listener error:', err);
+    });
+}
+
+// Listen to all platoons (for instructor registration dropdowns etc.)
+function listenToPlatoons(instructorId, callback) {
+  return db.collection('platoons')
+    .where('instructorId', '==', instructorId)
+    .onSnapshot(snapshot => {
+      const platoons = [];
+      snapshot.forEach(doc => {
+        platoons.push({ id: doc.id, ...doc.data() });
+      });
+      callback(platoons);
+    }, err => {
+      console.warn('Platoons listener error:', err);
+    });
+}
+
+// Get all platoons (for cadet registration)
+function getAllPlatoons() {
+  return db.collection('platoons')
+    .get()
+    .then(snapshot => {
+      const platoons = [];
+      snapshot.forEach(doc => {
+        platoons.push({ id: doc.id, ...doc.data() });
+      });
+      return platoons;
     });
 }

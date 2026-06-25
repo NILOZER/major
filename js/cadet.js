@@ -5,6 +5,94 @@ let selectedBodyPart = null;
 let selectedInjuryType = null;
 let selectedSeverity = null;
 
+// Scenario-based instructions
+const INSTRUCTION_SCENARIOS = {
+  'first_aid': {
+    short: 'Оказать первую помощь',
+    detailed: [
+      '1. Оцени обстановку и убедись в отсутствии угрозы для себя.',
+      '2. Определи источник кровотечения и тип ранения.',
+      '3. Наложи давящую повязку или жгут выше места ранения.',
+      '4. Запиши время наложения жгута (на коже или повязке).',
+      '5. При необходимости наложи шину на поврежденную конечность.',
+      '6. Укрой пострадавшего термоодеялом для предотвращения переохлаждения.',
+      '7. Доложи инструктору о выполненных действиях и состоянии.'
+    ]
+  },
+  'cover_move': {
+    short: 'Переместиться в укрытие',
+    detailed: [
+      '1. Осмотри местность и выбери ближайшее укрытие.',
+      '2. Перед началом движения оцени направление ветра и безопасный маршрут.',
+      '3. Передвигайся короткими перебежками (5–7 секунд).',
+      '4. Каждое укрытие проверяй на наличие взрывных устройств.',
+      '5. После занятия укрытия осмотрись и доложи "На месте".',
+      '6. Ожидай дальнейших указаний инструктора.',
+      '7. Будь готов к смене позиции по команде.'
+    ]
+  },
+  'wait_evac': {
+    short: 'Ожидать эвакуации',
+    detailed: [
+      '1. Займи безопасную позицию с обзором подходов.',
+      '2. Укройся за естественным или искусственным препятствием.',
+      '3. Подготовь сигнальные средства (фонарь, свисток, дым).',
+      '4. Наблюдай за обстановкой в секторе 360 градусов.',
+      '5. При обнаружении противника — доложи без шума.',
+      '6. Экономь ресурсы: вода, питание, боеприпасы.',
+      '7. Ожидай прибытия эвакуационной группы.'
+    ]
+  },
+  'hold_position': {
+    short: 'Сохранять позицию',
+    detailed: [
+      '1. Закрепись на текущей позиции.',
+      '2. Организуй круговую оборону (сектора наблюдения).',
+      '3. Проверь маскировку позиции — исправь при необходимости.',
+      '4. Минимизируй движения и шум.',
+      '5. Поддерживай радиомолчание, если не указано иное.',
+      '6. Докладывай о любых изменениях обстановки.',
+      '7. Ожидай смены позиции или сигнала к действию.'
+    ]
+  },
+  'continue_move': {
+    short: 'Продолжать движение',
+    detailed: [
+      '1. Проверь снаряжение и готовность к маршу.',
+      '2. Сверь направление движения по компасу/навигатору.',
+      '3. Соблюдай дистанцию 5–10 метров между бойцами.',
+      '4. Двигайся бесшумно, используя естественные укрытия.',
+      '5. Избегай открытых участков местности.',
+      '6. Следи за сигналами и жестами направляющего.',
+      '7. При остановке — немедленно занять оборону.'
+    ]
+  },
+  'fall_back': {
+    short: 'Отойти в тыл',
+    detailed: [
+      '1. Доложи "Отхожу" своему командиру отделения.',
+      '2. Прикройся огнем или дымовой завесой.',
+      '3. Отходи по заранее определенному маршруту.',
+      '4. Не поворачивайся спиной к вероятному противнику.',
+      '5. Используй перекаты и перебежки от укрытия к укрытию.',
+      '6. По пути собирай данные о местности и противнике.',
+      '7. По прибытии в тыл доложи инструктору.'
+    ]
+  },
+  'report': {
+    short: 'Доложить обстановку',
+    detailed: [
+      '1. Выйди на связь с инструктором по установленному каналу.',
+      '2. Доклад по форме: "Я — [позывной], — нахожусь в [координаты] — обстановка [описание]".',
+      '3. Сообщи количество личного состава рядом.',
+      '4. Доложи о раненых (если есть).',
+      '5. Укажи видимые цели и препятствия.',
+      '6. Запроси дальнейшие указания.',
+      '7. После доклада ожидай подтверждения связи.'
+    ]
+  }
+};
+
 // Initialize cadet screen
 function initCadetScreen() {
   const screen = document.getElementById('cadet-screen');
@@ -24,6 +112,11 @@ function initCadetScreen() {
       <div id="cadet-instruction" class="empty">Нет инструкций</div>
     </div>
 
+    <div class="instruction-scenario-box" id="cadet-scenario-box" style="display:none">
+      <div class="label">Пошаговый план действий</div>
+      <div id="cadet-scenario-content"></div>
+    </div>
+
     <div class="card" style="margin-bottom:12px">
       <div style="font-size:0.75rem;text-transform:uppercase;color:#888;margin-bottom:8px;font-weight:700">Состояние движения</div>
       <div id="cadet-march-display" class="march-state hold">Ожидание</div>
@@ -38,6 +131,7 @@ function initCadetScreen() {
     </div>
 
     <button class="btn btn-danger" onclick="openInjuryModal()">Ранен</button>
+    <button class="btn btn-success" onclick="setSelfRecovered()" id="cadet-recover-btn">Я здоров</button>
   `;
 
   // Start listening to cadet data
@@ -68,7 +162,13 @@ function listenToCadetData() {
       marchEl.textContent = marchLabels[data.marchState] || data.marchState;
       marchEl.className = 'march-state ' + (data.marchState || 'hold');
 
-      // Update instruction
+      // Show/hide recover button based on status
+      const recoverBtn = document.getElementById('cadet-recover-btn');
+      if (recoverBtn) {
+        recoverBtn.style.display = (data.status && data.status !== 'healthy') ? 'flex' : 'none';
+      }
+
+      // Update instruction - For cadet show DETAILED version
       const instrEl = document.getElementById('cadet-instruction');
       if (data.instruction) {
         instrEl.textContent = data.instruction;
@@ -76,6 +176,19 @@ function listenToCadetData() {
       } else {
         instrEl.textContent = 'Нет инструкций';
         instrEl.className = 'empty';
+      }
+
+      // Show scenario-based detailed instructions
+      const scenarioBox = document.getElementById('cadet-scenario-box');
+      const scenarioContent = document.getElementById('cadet-scenario-content');
+      if (data.instructionScenario && INSTRUCTION_SCENARIOS[data.instructionScenario]) {
+        const scenario = INSTRUCTION_SCENARIOS[data.instructionScenario];
+        scenarioBox.style.display = 'block';
+        scenarioContent.innerHTML = scenario.detailed.map((step, i) =>
+          `<div class="scenario-step"><span class="step-num">${i + 1}</span> ${step}</div>`
+        ).join('');
+      } else {
+        scenarioBox.style.display = 'none';
       }
     }, err => {
       console.warn('Cadet listener error:', err);
@@ -100,7 +213,6 @@ function updateStatusBadge(status) {
 function updateMarchState(state) {
   if (!currentUser) return;
 
-  // If cadet was injured, allow march state update but keep injured status
   const update = {
     marchState: state,
     lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
@@ -113,6 +225,34 @@ function updateMarchState(state) {
     .catch(err => {
       console.error('Failed to update march state:', err);
       showError('Ошибка обновления');
+    });
+}
+
+// Self-recover to healthy
+function setSelfRecovered() {
+  if (!currentUser) return;
+
+  const confirmed = confirm('Вернуть статус "Здоров"?');
+  if (!confirmed) return;
+
+  const previousStatus = document.getElementById('cadet-status-badge').className
+    .replace('cadet-status-badge ', '')
+    .split(' ')[0];
+
+  const update = {
+    status: 'healthy',
+    injury: { type: '', bodyPart: '', severity: '' },
+    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  db.collection('users').doc(currentUser.uid).update(update)
+    .then(() => {
+      logStatusChange(currentUser.uid, previousStatus, 'healthy', currentUser.uid, 'Самостоятельно');
+      logEvent('status_change', { previousStatus, newStatus: 'healthy', reason: 'Самостоятельно' });
+    })
+    .catch(err => {
+      console.error('Failed to set recovered:', err);
+      showError('Ошибка смены статуса');
     });
 }
 
@@ -254,20 +394,24 @@ function submitInjury() {
     status = 'critical';
   }
 
-  const update = {
-    status: status,
-    injury: injuryData,
-    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-  };
+  // Get current status for history
+  db.collection('users').doc(currentUser.uid).get().then(doc => {
+    const previousStatus = doc.exists ? (doc.data().status || 'healthy') : 'healthy';
 
-  db.collection('users').doc(currentUser.uid).update(update)
-    .then(() => {
+    const update = {
+      status: status,
+      injury: injuryData,
+      lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    return db.collection('users').doc(currentUser.uid).update(update).then(() => {
+      logStatusChange(currentUser.uid, previousStatus, status, currentUser.uid, 'Самостоятельно');
       logEvent('injury_reported', injuryData);
       closeInjuryModal();
-    })
-    .catch(err => {
-      console.error('Failed to submit injury:', err);
-      showError('Ошибка при отправке данных');
-      closeInjuryModal();
     });
+  }).catch(err => {
+    console.error('Failed to submit injury:', err);
+    showError('Ошибка при отправке данных');
+    closeInjuryModal();
+  });
 }

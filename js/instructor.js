@@ -189,16 +189,14 @@ function renderCadetListGrouped(cadets) {
 
   let html = '';
 
-  // Render each platoon group
+  // Render all instructor platoons (even empty ones)
   instructorPlatoons.forEach(p => {
     const cadetsInPlatoon = grouped[p.id] || [];
-    // Count cadets matching the current filter, but display total in header
     const totalInPlatoon = allCadetsData.filter(c => c.platoonId === p.id).length;
     const isExpanded = expandedPlatoons[p.id] || false;
 
-    // Only show platoons that have cadets in the current filter view
-    if (cadetsInPlatoon.length === 0 && currentCadetFilter === 'all' && totalInPlatoon === 0) return;
-    if (cadetsInPlatoon.length === 0 && currentCadetFilter !== 'all') return;
+    // In filtered mode, hide platoons that have no cadets matching the filter
+    if (currentCadetFilter !== 'all' && cadetsInPlatoon.length === 0) return;
 
     const maxCap = p.maxCadets || 30;
     const capacityStr = `${totalInPlatoon}/${maxCap}`;
@@ -318,10 +316,36 @@ function renderPlatoonList() {
     counts[pid] = (counts[pid] || 0) + 1;
   });
 
+  // Get cadets grouped by platoon for list display
+  const cadetsByPlatoon = {};
+  allCadetsData.forEach(c => {
+    const pid = c.platoonId || '__none__';
+    if (!cadetsByPlatoon[pid]) cadetsByPlatoon[pid] = [];
+    cadetsByPlatoon[pid].push(c);
+  });
+
   container.innerHTML = instructorPlatoons.map(p => {
     const count = counts[p.id] || 0;
     const maxCap = p.maxCadets || 30;
     const capacityClass = count >= maxCap ? 'capacity-full' : (count >= maxCap * 0.8 ? 'capacity-warning' : '');
+
+    const cadetsInPlatoon = cadetsByPlatoon[p.id] || [];
+
+    const cadetListHtml = cadetsInPlatoon.length === 0
+      ? '<div class="platoon-card-empty" style="padding:8px 0;color:#666;font-style:italic;font-size:0.85rem">Нет курсантов</div>'
+      : cadetsInPlatoon.map(cadet => {
+          const statusLabels = { healthy: 'Здоров', warning: 'Внимание', injured: 'Ранен', critical: 'Критический' };
+          return `
+            <div class="platoon-cadet-row">
+              <span class="platoon-cadet-name" onclick="openCadetDetail('${cadet.id}')">
+                ${cadet.name || 'Без имени'}
+              </span>
+              <span class="platoon-cadet-status ${cadet.status || 'healthy'}">${statusLabels[cadet.status] || 'Здоров'}</span>
+              <button class="btn btn-danger btn-sm" onclick="removeCadetFromPlatoonById('${cadet.id}')" style="width:auto;margin:0;padding:4px 10px;font-size:0.7rem">Убрать</button>
+            </div>
+          `;
+        }).join('');
+
     return `
     <div class="platoon-card">
       <div class="platoon-card-header">
@@ -331,6 +355,10 @@ function renderPlatoonList() {
       ${p.description ? `<div class="platoon-card-desc">${p.description}</div>` : ''}
       <div class="platoon-card-meta">
         <span class="${capacityClass}">Заполнено: ${count}/${maxCap}</span> • Код: ${p.code || '—'} • Создан: ${p.createdAt?.toDate?.()?.toLocaleDateString('ru-RU') || 'недавно'}
+      </div>
+      <div class="platoon-card-cadets" style="margin-top:10px;padding-top:10px;border-top:2px solid #0f3460">
+        <div style="font-size:0.75rem;text-transform:uppercase;color:#888;margin-bottom:6px;font-weight:700">Курсанты:</div>
+        ${cadetListHtml}
       </div>
       <div class="platoon-card-actions">
         <button class="btn btn-secondary btn-sm" onclick="openEditPlatoonModal('${p.id}')" style="width:auto;margin:8px 0 0 0;padding:6px 12px">Изменить лимит</button>
@@ -616,6 +644,13 @@ function closeCadetDetail() {
 
 // ===== REMOVE CADET FROM PLATOON =====
 
+// Called from platoon-card inline remove button
+function removeCadetFromPlatoonById(cadetId) {
+  if (!cadetId || !currentUser) return;
+  selectedCadetId = cadetId;
+  removeCadetFromPlatoon();
+}
+
 function removeCadetFromPlatoon() {
   if (!selectedCadetId || !currentUser) return;
 
@@ -675,7 +710,7 @@ function loadCadetEvents(cadetId) {
     }).join('');
   }).catch(err => {
     console.warn('Events load error:', err);
-    container.innerHTML = '<div style="color:#666;font-style:italic">Ошибка загрузки событий. Необходимо создать составной индекс в Firebase Console.</div>';
+    container.innerHTML = '<div style="color:#666;font-style:italic">Ошибка загрузки событий. Проверьте подключение к БД.</div>';
   });
 }
 
@@ -705,27 +740,7 @@ function loadStatusHistory(cadetId) {
     }).join('');
   }).catch(err => {
     console.warn('Status history load error:', err);
-    // Show helpful error message with instructions
-    container.innerHTML = `
-      <div style="color:#e94560;font-style:italic;padding:8px">
-        Ошибка загрузки истории статусов.
-        <div style="margin-top:8px;font-size:0.7rem;color:#aaa">
-          Для работы истории статусов необходимо создать составной индекс в Firebase Console:
-          <br><br>
-          1. Откройте <a href="https://console.firebase.google.com" target="_blank" style="color:#e94560">Firebase Console</a>
-          <br>
-          2. Перейдите в Firestore Database → Indexes
-          <br>
-          3. Создайте составной индекс:
-          <br>
-          &nbsp;&nbsp;Collection: <strong>statusHistory</strong>
-          <br>
-          &nbsp;&nbsp;Fields: <strong>userId</strong> (Ascending), <strong>timestamp</strong> (Descending)
-          <br><br>
-          Или нажмите на ссылку в консоли браузера, когда появится ошибка.
-        </div>
-      </div>
-    `;
+    container.innerHTML = '<div style="color:#e94560;font-style:italic;padding:8px">Ошибка загрузки истории статусов. Подробнее в консоли браузера.</div>';
   });
 }
 

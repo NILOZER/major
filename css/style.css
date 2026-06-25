@@ -624,6 +624,157 @@ body {
 .march-state.separated { background: #e74c3c; color: #fff; }
 .march-state.stopped { background: #95a5a6; color: #000; }
 
+/* ===== INSTRUCTOR TABS ===== */
+.instructor-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 3px solid #0f3460;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  background: #1a1a2e;
+  border: none;
+  border-top: 3px solid transparent;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom: none;
+  color: #888;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.5px;
+}
+
+.tab-btn.active {
+  background: #16213e;
+  color: #eee;
+  border-top-color: #e94560;
+  border-left-color: #0f3460;
+  border-right-color: #0f3460;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* ===== PLATOON MANAGEMENT ===== */
+.platoon-controls {
+  margin-bottom: 16px;
+}
+
+.platoon-list {
+  flex: 1;
+}
+
+.platoon-card {
+  background: #16213e;
+  border: 3px solid #533483;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  box-shadow: 4px 4px 0 #0a0a1a;
+}
+
+.platoon-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.platoon-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e94560;
+}
+
+.platoon-card-desc {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.platoon-card-meta {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* ===== STATUS CONTROL GRID ===== */
+.status-control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.status-control-grid .btn {
+  margin: 0;
+  font-size: 0.85rem;
+  padding: 10px 8px;
+}
+
+/* ===== SCENARIO INSTRUCTIONS ===== */
+.instruction-scenario-box {
+  background: #1a1a2e;
+  border: 3px solid #2ecc71;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 4px 4px 0 #0a0a1a;
+}
+
+.instruction-scenario-box .label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #2ecc71;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.scenario-step {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #0f3460;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #ddd;
+}
+
+.scenario-step:last-child {
+  border-bottom: none;
+}
+
+.step-num {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: #2ecc71;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  border: 2px solid #000;
+}
+
+/* ===== CADET RECOVER BUTTON ===== */
+#cadet-recover-btn {
+  margin-top: 4px;
+}
+
 /* ===== LOGOUT BUTTON ===== */
 .logout-btn {
   position: fixed;

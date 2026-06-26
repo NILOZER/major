@@ -9,6 +9,7 @@ logoutBtn.className = 'logout-btn';
 logoutBtn.textContent = 'Выйти';
 logoutBtn.style.display = 'none';
 logoutBtn.onclick = () => logout();
+logoutBtn.setAttribute('aria-hidden', 'true');
 document.body.appendChild(logoutBtn);
 
 function showAuthError(msg) {

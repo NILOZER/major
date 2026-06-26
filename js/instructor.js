@@ -23,7 +23,10 @@ const INSTRUCTOR_SCENARIOS = {
 function initInstructorScreen() {
   const screen = document.getElementById('instructor-screen');
   screen.innerHTML = `
-   
+    <div class="screen-header">
+      <h1>Панель инструктора</h1>
+      <p id="instructor-name-display">Мониторинг курсантов</p>
+    </div>
 
     <!-- MANAGEMENT TAB (cadets live here) -->
     <div id="tab-management" class="tab-content active">

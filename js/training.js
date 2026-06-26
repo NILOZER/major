@@ -428,7 +428,6 @@ const REFERENCE_ITEMS = [
 
 let currentTrainingView = 'modules';
 let currentModuleId = null;
-let currentReferenceId = null;
 let quizAnswers = {};
 
 // ===== RENDER =====

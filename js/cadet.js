@@ -240,7 +240,10 @@ const INSTRUCTION_SCENARIOS = {
 function initCadetScreen() {
   const screen = document.getElementById('cadet-screen');
   screen.innerHTML = `
-   
+    <div class="screen-header">
+      <h1>Курсант</h1>
+      <p id="cadet-name-display">...</p>
+    </div>
 
     <div id="cadet-status-badge" class="cadet-status-badge healthy">
       <span class="status-indicator"></span>

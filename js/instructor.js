@@ -28,12 +28,6 @@ function initInstructorScreen() {
       <p id="instructor-name-display">Мониторинг курсантов</p>
     </div>
 
-    <div class="instructor-tabs">
-      <button class="tab-btn active" data-tab="management" onclick="switchInstructorTab('management')">Управление</button>
-      <button class="tab-btn" data-tab="platoons" onclick="switchInstructorTab('platoons')">Взводы</button>
-      <button class="tab-btn" data-tab="training" onclick="switchInstructorTab('training')">Обучение</button>
-    </div>
-
     <!-- MANAGEMENT TAB (cadets live here) -->
     <div id="tab-management" class="tab-content active">
       <div class="section-subtitle">Курсанты</div>
@@ -89,14 +83,29 @@ function initInstructorScreen() {
 }
 
 function switchInstructorTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  document.querySelector(`.tab-btn[data-tab="${tab}"]`).classList.add('active');
   document.getElementById(`tab-${tab}`).classList.add('active');
 
   if (tab === 'platoons') {
     renderPlatoonList();
   }
+}
+
+// Called from sidebar navigation - switches tab and updates UI state
+function switchInstructorPage(page) {
+  switchInstructorTab(page);
+
+  // Update sidebar active state
+  updateActiveNav(page);
+
+  // Update header
+  const headerNames = {
+    management: 'Управление курсантами',
+    platoons: 'Взводы',
+    training: 'Обучение'
+  };
+  document.getElementById('header-title').textContent = 'TCCC · Командование';
+  document.getElementById('header-screen-name').textContent = headerNames[page] || 'Панель инструктора';
 }
 
 // ===== PLATOON MANAGEMENT =====

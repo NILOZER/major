@@ -24,13 +24,21 @@ function buildAppShell() {
       </div>
       <div class="sidebar-nav">
         <div class="nav-label">Навигация</div>
-        <a class="nav-item" id="nav-dashboard" onclick="navigateTo('dashboard')">
-          <span class="nav-icon">&#x2302;</span>
-          <span>Панель</span>
-        </a>
-        <a class="nav-item" id="nav-operations" onclick="navigateTo('operations')">
+        <a class="nav-item instructor-only" id="nav-management" onclick="navigateTo('management')" style="display:none">
           <span class="nav-icon">&#x2699;</span>
           <span>Управление</span>
+        </a>
+        <a class="nav-item instructor-only" id="nav-platoons" onclick="navigateTo('platoons')" style="display:none">
+          <span class="nav-icon">&#x2630;</span>
+          <span>Взводы</span>
+        </a>
+        <a class="nav-item instructor-only" id="nav-training" onclick="navigateTo('training')" style="display:none">
+          <span class="nav-icon">&#x1F393;</span>
+          <span>Обучение</span>
+        </a>
+        <a class="nav-item cadet-only" id="nav-dashboard" onclick="navigateTo('dashboard')" style="display:none">
+          <span class="nav-icon">&#x2302;</span>
+          <span>Панель</span>
         </a>
       </div>
       <div class="sidebar-footer">
@@ -75,13 +83,21 @@ function buildAppShell() {
   bottomNav.className = 'bottom-nav';
   bottomNav.id = 'bottom-nav';
   bottomNav.innerHTML = `
-    <button class="bottom-nav-item" id="bn-dashboard" onclick="navigateTo('dashboard')">
+    <button class="bottom-nav-item instructor-only" id="bn-management" onclick="navigateTo('management')" style="display:none">
+      <span class="bn-icon">&#x2699;</span>
+      <span class="bn-label">Упр.</span>
+    </button>
+    <button class="bottom-nav-item instructor-only" id="bn-platoons" onclick="navigateTo('platoons')" style="display:none">
+      <span class="bn-icon">&#x2630;</span>
+      <span class="bn-label">Взводы</span>
+    </button>
+    <button class="bottom-nav-item instructor-only" id="bn-training" onclick="navigateTo('training')" style="display:none">
+      <span class="bn-icon">&#x1F393;</span>
+      <span class="bn-label">Обуч.</span>
+    </button>
+    <button class="bottom-nav-item cadet-only" id="bn-dashboard" onclick="navigateTo('dashboard')" style="display:none">
       <span class="bn-icon">&#x2302;</span>
       <span class="bn-label">Панель</span>
-    </button>
-    <button class="bottom-nav-item" id="bn-operations" onclick="navigateTo('operations')">
-      <span class="bn-icon">&#x2699;</span>
-      <span class="bn-label">Управление</span>
     </button>
   `;
   document.body.appendChild(bottomNav);
@@ -196,6 +212,10 @@ function showCadetScreen() {
 
   updateActiveNav('dashboard');
 
+  // Show cadet nav items, hide instructor nav items
+  document.querySelectorAll('.instructor-only').forEach(e => e.style.display = 'none');
+  document.querySelectorAll('.cadet-only').forEach(e => e.style.display = '');
+
   cleanupInstructorListeners();
 
   initCadetScreen();
@@ -208,7 +228,11 @@ function showInstructorScreen() {
   document.getElementById('header-title').textContent = 'TCCC · Командование';
   document.getElementById('header-screen-name').textContent = 'Панель инструктора';
 
-  updateActiveNav('operations');
+  // Show instructor nav items, hide cadet nav items
+  document.querySelectorAll('.instructor-only').forEach(e => e.style.display = '');
+  document.querySelectorAll('.cadet-only').forEach(e => e.style.display = 'none');
+
+  updateActiveNav('management');
 
   if (cadetUnsubscribe) {
     cadetUnsubscribe();
@@ -217,8 +241,8 @@ function showInstructorScreen() {
 
   initInstructorScreen();
 
-  // Default to management tab when navigating from sidebar
-  switchInstructorTab('management');
+  // Default to management tab
+  switchInstructorPage('management');
 }
 
 function showAuthScreen() {
@@ -243,14 +267,13 @@ function navigateTo(page) {
   }
 
   if (currentUserRole === 'cadet') {
-    if (page === 'dashboard' || page === 'cadets') {
+    if (page === 'dashboard') {
       showCadetScreen();
     }
   } else if (currentUserRole === 'instructor') {
-    if (page === 'operations' || page === 'dashboard') {
+    if (page === 'management' || page === 'platoons' || page === 'training') {
       showInstructorScreen();
-      // Default to management tab
-      switchInstructorTab('management');
+      switchInstructorPage(page);
     }
   }
 }

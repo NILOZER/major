@@ -434,6 +434,14 @@ header {
 }
 
 /* ===================================================================
+   6.5. РОЛЕВЫЕ КЛАССЫ ВИДИМОСТИ
+   =================================================================== */
+.instructor-only,
+.cadet-only {
+  display: none !important;
+}
+
+/* ===================================================================
    7. BOTTOM NAVIGATION (мобильная)
    =================================================================== */
 .bottom-nav {
@@ -1207,41 +1215,9 @@ header {
   gap: 0;
 }
 
-.instructor-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 14px;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 10px 16px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--text-dim);
-  font-family: var(--font-family);
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  cursor: pointer;
-  transition: all var(--transition);
-  margin-bottom: -1px;
-}
-
-.tab-btn:hover {
-  color: var(--text-secondary);
-}
-
-.tab-btn.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-
 .tab-content {
   display: none;
+  margin-top: 14px;
 }
 
 .tab-content.active {

@@ -3,13 +3,11 @@
 let currentUser = null;
 let currentUserRole = null;
 
-// Logout button element
+// Inline logout button (hidden by default, used as a fallback)
 const logoutBtn = document.createElement('button');
-logoutBtn.className = 'logout-btn';
 logoutBtn.textContent = 'Выйти';
-logoutBtn.style.display = 'none';
+logoutBtn.style.cssText = 'display:none;position:fixed;top:12px;right:12px;z-index:50;padding:7px 14px;background:rgba(255,71,87,0.08);color:#ff4757;border:1px solid rgba(255,71,87,0.2);border-radius:8px;font-family:Inter,sans-serif;font-size:0.65rem;font-weight:600;cursor:pointer;text-transform:uppercase;letter-spacing:0.8px;';
 logoutBtn.onclick = () => logout();
-logoutBtn.setAttribute('aria-hidden', 'true');
 document.body.appendChild(logoutBtn);
 
 function showAuthError(msg) {
@@ -46,7 +44,6 @@ function toggleAuthMode() {
   } else {
     loginForm.style.display = 'none';
     registerForm.style.display = 'block';
-    // Load platoons when registration form is shown
     loadPlatoonsForRegistration();
     toggleText.innerHTML = 'Уже есть аккаунт? <a onclick="toggleAuthMode()">Войти</a>';
   }
@@ -60,7 +57,6 @@ function loadPlatoonsForRegistration() {
   const select = document.getElementById('reg-platoon');
   if (!select) return;
 
-  // Check selected role
   const role = document.getElementById('reg-role').value;
   if (role !== 'cadet') {
     platoonGroup.style.display = 'none';
@@ -69,7 +65,6 @@ function loadPlatoonsForRegistration() {
 
   platoonGroup.style.display = 'block';
 
-  // Show loading
   select.innerHTML = '<option value="">Загрузка взводов...</option>';
   select.disabled = true;
 
@@ -79,14 +74,12 @@ function loadPlatoonsForRegistration() {
   ]).then(([platoons, cadetSnapshot]) => {
     select.disabled = false;
 
-    // Count cadets per platoon
     const counts = {};
     cadetSnapshot.forEach(doc => {
       const pid = doc.data().platoonId || '__none__';
       counts[pid] = (counts[pid] || 0) + 1;
     });
 
-    // Filter out full platoons
     const available = platoons.filter(p => {
       const maxCap = p.maxCadets || 30;
       const currentCount = counts[p.id] || 0;
@@ -101,7 +94,6 @@ function loadPlatoonsForRegistration() {
 
     document.getElementById('reg-platoon-manual-group').style.display = 'none';
 
-    // Group platoons by instructor name
     const grouped = {};
     available.forEach(p => {
       const instructorName = p.instructorName || 'Инструктор';
@@ -128,13 +120,11 @@ function loadPlatoonsForRegistration() {
   });
 }
 
-// Handle role change in registration form
 function onRegRoleChange() {
   clearAuthError();
   loadPlatoonsForRegistration();
 }
 
-// Handle login
 function handleLogin(e) {
   e.preventDefault();
   clearAuthError();
@@ -167,7 +157,6 @@ function handleLogin(e) {
     });
 }
 
-// Handle registration
 function handleRegister(e) {
   e.preventDefault();
   clearAuthError();
@@ -187,9 +176,7 @@ function handleRegister(e) {
     return;
   }
 
-  // For cadet, validate platoon selection
   let platoonId = null;
-  let instructorId = null;
 
   if (role === 'cadet') {
     platoonId = document.getElementById('reg-platoon').value;
@@ -203,7 +190,6 @@ function handleRegister(e) {
 
   auth.createUserWithEmailAndPassword(email, password)
     .then(result => {
-      // Create user profile in Firestore
       const userData = {
         name: name,
         email: email,
@@ -211,7 +197,6 @@ function handleRegister(e) {
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       };
 
-      // If cadet, initialize data structure
       if (role === 'cadet') {
         userData.marchState = 'hold';
         userData.status = 'healthy';
@@ -223,10 +208,8 @@ function handleRegister(e) {
         userData.instructionFrom = '';
         userData.instructionTime = null;
 
-        // Handle platoon
         if (platoonId) {
           userData.platoonId = platoonId;
-          // We'll set instructorId after we resolve the platoon
           return db.collection('platoons').doc(platoonId).get().then(platoonDoc => {
             if (platoonDoc.exists) {
               userData.instructorId = platoonDoc.data().instructorId || '';
@@ -234,7 +217,6 @@ function handleRegister(e) {
             return db.collection('users').doc(result.user.uid).set(userData);
           });
         } else {
-          // Manual platoon name - store as pending
           const manualPlatoonName = document.getElementById('reg-platoon-manual').value.trim();
           userData.platoonName = manualPlatoonName;
           userData.platoonId = '';
@@ -265,7 +247,6 @@ function handleRegister(e) {
     });
 }
 
-// Check user role from Firestore
 function checkUserRole(user) {
   return db.collection('users').doc(user.uid).get()
     .then(doc => {
@@ -279,7 +260,6 @@ function checkUserRole(user) {
     });
 }
 
-// Logout
 function logout() {
   const confirmed = confirm('Выйти из системы?');
   if (!confirmed) return;
@@ -288,7 +268,6 @@ function logout() {
     currentUser = null;
     currentUserRole = null;
 
-    // Clean up listeners
     if (typeof cleanupListeners === 'function') {
       cleanupListeners();
     }
@@ -297,13 +276,11 @@ function logout() {
   });
 }
 
-// Auth state listener
 auth.onAuthStateChanged(user => {
   if (user) {
     checkUserRole(user).then(() => {
       initApp();
     }).catch(() => {
-      // User doc doesn't exist yet or error
       showAuthScreen();
     });
   } else {

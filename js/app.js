@@ -24,19 +24,19 @@ function buildAppShell() {
       </div>
       <div class="sidebar-nav">
         <div class="nav-label">Навигация</div>
-        <a class="nav-item instructor-only" id="nav-management" onclick="navigateTo('management')" style="display:none">
+        <a class="nav-item" id="nav-management" data-roles="instructor" onclick="navigateTo('management')">
           <span class="nav-icon">&#x2699;</span>
           <span>Управление</span>
         </a>
-        <a class="nav-item instructor-only" id="nav-platoons" onclick="navigateTo('platoons')" style="display:none">
+        <a class="nav-item" id="nav-platoons" data-roles="instructor" onclick="navigateTo('platoons')">
           <span class="nav-icon">&#x2630;</span>
           <span>Взводы</span>
         </a>
-        <a class="nav-item instructor-only" id="nav-training" onclick="navigateTo('training')" style="display:none">
+        <a class="nav-item" id="nav-training" data-roles="instructor,cadet" onclick="navigateTo('training')">
           <span class="nav-icon">&#x1F393;</span>
           <span>Обучение</span>
         </a>
-        <a class="nav-item cadet-only" id="nav-dashboard" onclick="navigateTo('dashboard')" style="display:none">
+        <a class="nav-item" id="nav-dashboard" data-roles="cadet" onclick="navigateTo('dashboard')">
           <span class="nav-icon">&#x2302;</span>
           <span>Панель</span>
         </a>
@@ -83,19 +83,19 @@ function buildAppShell() {
   bottomNav.className = 'bottom-nav';
   bottomNav.id = 'bottom-nav';
   bottomNav.innerHTML = `
-    <button class="bottom-nav-item instructor-only" id="bn-management" onclick="navigateTo('management')" style="display:none">
+    <button class="bottom-nav-item" data-roles="instructor" id="bn-management" onclick="navigateTo('management')">
       <span class="bn-icon">&#x2699;</span>
       <span class="bn-label">Упр.</span>
     </button>
-    <button class="bottom-nav-item instructor-only" id="bn-platoons" onclick="navigateTo('platoons')" style="display:none">
+    <button class="bottom-nav-item" data-roles="instructor" id="bn-platoons" onclick="navigateTo('platoons')">
       <span class="bn-icon">&#x2630;</span>
       <span class="bn-label">Взводы</span>
     </button>
-    <button class="bottom-nav-item instructor-only" id="bn-training" onclick="navigateTo('training')" style="display:none">
+    <button class="bottom-nav-item" data-roles="instructor,cadet" id="bn-training" onclick="navigateTo('training')">
       <span class="bn-icon">&#x1F393;</span>
       <span class="bn-label">Обуч.</span>
     </button>
-    <button class="bottom-nav-item cadet-only" id="bn-dashboard" onclick="navigateTo('dashboard')" style="display:none">
+    <button class="bottom-nav-item" data-roles="cadet" id="bn-dashboard" onclick="navigateTo('dashboard')">
       <span class="bn-icon">&#x2302;</span>
       <span class="bn-label">Панель</span>
     </button>
@@ -173,6 +173,14 @@ function buildAppShell() {
   `;
 }
 
+// Apply role-based visibility to all nav elements (sidebar + bottom-nav)
+function applyRoleVisibility(role) {
+  document.querySelectorAll('[data-roles]').forEach(el => {
+    const allowedRoles = el.getAttribute('data-roles').split(',');
+    el.style.display = allowedRoles.includes(role) ? '' : 'none';
+  });
+}
+
 // Initialize app based on user role
 function initApp() {
   const body = document.body;
@@ -210,11 +218,8 @@ function showCadetScreen() {
   document.getElementById('header-title').textContent = 'TCCC · Курсант';
   document.getElementById('header-screen-name').textContent = 'Панель управления';
 
+  applyRoleVisibility('cadet');
   updateActiveNav('dashboard');
-
-  // Show cadet nav items, hide instructor nav items
-  document.querySelectorAll('.instructor-only').forEach(e => e.style.display = 'none');
-  document.querySelectorAll('.cadet-only').forEach(e => e.style.display = '');
 
   cleanupInstructorListeners();
 
@@ -228,10 +233,7 @@ function showInstructorScreen() {
   document.getElementById('header-title').textContent = 'TCCC · Командование';
   document.getElementById('header-screen-name').textContent = 'Панель инструктора';
 
-  // Show instructor nav items, hide cadet nav items
-  document.querySelectorAll('.instructor-only').forEach(e => e.style.display = '');
-  document.querySelectorAll('.cadet-only').forEach(e => e.style.display = 'none');
-
+  applyRoleVisibility('instructor');
   updateActiveNav('management');
 
   if (cadetUnsubscribe) {
@@ -267,7 +269,14 @@ function navigateTo(page) {
   }
 
   if (currentUserRole === 'cadet') {
-    if (page === 'dashboard') {
+    if (page === 'dashboard' || page === 'training') {
+      // Training shows same screen (cadet screen), just update header
+      if (page === 'training') {
+        document.getElementById('header-title').textContent = 'TCCC · Курсант';
+        document.getElementById('header-screen-name').textContent = 'Обучение';
+        updateActiveNav('training');
+        return;
+      }
       showCadetScreen();
     }
   } else if (currentUserRole === 'instructor') {

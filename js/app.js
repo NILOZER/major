@@ -1,6 +1,6 @@
 // ===== TACTICAL COMMAND CENTER — MAIN APP ROUTER =====
 
-// Build the complete shell: sidebar + header + status bar + screens
+// Build the complete shell: sidebar + header + bottom nav + screens
 function buildAppShell() {
   const app = document.getElementById('app');
   const body = document.body;
@@ -21,10 +21,6 @@ function buildAppShell() {
             <div class="sidebar-subtitle">Tactical Command</div>
           </div>
         </div>
-        <div class="sidebar-sysinfo">
-          <span class="dot"></span>
-          <span>Система готова</span>
-        </div>
       </div>
       <div class="sidebar-nav">
         <div class="nav-label">Навигация</div>
@@ -44,44 +40,32 @@ function buildAppShell() {
           <span class="nav-icon">&#x2630;</span>
           <span>Взводы</span>
         </a>
-
-        <div style="flex:1"></div>
-
-        <div class="nav-label">Система</div>
-        <a class="nav-item" onclick="logout()" style="color:var(--text-muted)">
-          <span class="nav-icon">&#x21AA;</span>
-          <span>Выйти</span>
-        </a>
       </div>
       <div class="sidebar-footer">
-        <div class="connection-indicator">
-          <span class="status-dot" id="conn-dot"></span>
-          <span class="conn-label">Firebase</span>
-          <span class="conn-status" id="conn-status">ONLINE</span>
+        <div class="logout-item" onclick="logout()">
+          <span>&#x21AA;</span>
+          <span>Выйти</span>
         </div>
       </div>
     </nav>
   `;
   document.body.insertBefore(sidebar, app);
 
-  // Wrap app in main-wrapper with header and status bar
+  // Wrap app in main-wrapper with header
   const wrapper = document.createElement('div');
   wrapper.className = 'main-wrapper';
 
   const header = document.createElement('header');
   header.innerHTML = `
     <div class="header-left">
+      <button class="hamburger-btn" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Меню">&#x2630;</button>
       <div class="header-title" id="header-title">TCCC</div>
-      <div class="header-breadcrumb" id="header-breadcrumb">
+      <div class="header-breadcrumb">
         <span>&#x25B6;</span>
         <span id="header-screen-name">Авторизация</span>
       </div>
     </div>
     <div class="header-right">
-      <div class="header-status">
-        <span class="pulse-ring"></span>
-        <span class="status-text" id="header-status-text">ONLINE</span>
-      </div>
       <div class="header-user" id="header-user" style="display:none">
         <div class="user-avatar" id="user-avatar">?</div>
         <span class="user-name" id="user-name">Пользователь</span>
@@ -89,31 +73,34 @@ function buildAppShell() {
     </div>
   `;
 
-  const statusBar = document.createElement('div');
-  statusBar.className = 'status-bar';
-  statusBar.innerHTML = `
-    <div class="status-group">
-      <div class="status-item">
-        <span class="dot" id="sb-db"></span>
-        <span>DATABASE</span>
-      </div>
-      <div class="status-item">
-        <span class="dot" id="sb-auth"></span>
-        <span>AUTH</span>
-      </div>
-      <div class="status-item">
-        <span class="dot" id="sb-sync"></span>
-        <span>SYNC</span>
-      </div>
-    </div>
-    <div class="status-time" id="status-time">--:--:--</div>
-  `;
-
   // Move app into wrapper
   app.parentNode.insertBefore(wrapper, app);
   wrapper.appendChild(header);
   wrapper.appendChild(app);
-  wrapper.appendChild(statusBar);
+
+  // Inject bottom navigation (hidden on desktop, shown on mobile)
+  const bottomNav = document.createElement('div');
+  bottomNav.className = 'bottom-nav';
+  bottomNav.id = 'bottom-nav';
+  bottomNav.innerHTML = `
+    <button class="bottom-nav-item" id="bn-dashboard" onclick="navigateTo('dashboard')">
+      <span class="bn-icon">&#x2302;</span>
+      <span class="bn-label">Панель</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-operations" onclick="navigateTo('operations')">
+      <span class="bn-icon">&#x2699;</span>
+      <span class="bn-label">Управление</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-cadets" onclick="navigateTo('cadets')">
+      <span class="bn-icon">&#x263A;</span>
+      <span class="bn-label">Состав</span>
+    </button>
+    <button class="bottom-nav-item" id="bn-platoons" onclick="navigateTo('platoons')">
+      <span class="bn-icon">&#x2630;</span>
+      <span class="bn-label">Взводы</span>
+    </button>
+  `;
+  document.body.appendChild(bottomNav);
 
   // Build the three screens inside app
   app.innerHTML = `
@@ -184,9 +171,6 @@ function buildAppShell() {
     <!-- INSTRUCTOR SCREEN -->
     <div id="instructor-screen" class="screen"></div>
   `;
-
-  // Start clock
-  startStatusClock();
 }
 
 // Initialize app based on user role
@@ -208,9 +192,6 @@ function initApp() {
         document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
       }
     });
-
-    // Update connection indicator
-    updateConnectionStatus(true);
   }
 
   if (currentUserRole === 'instructor') {
@@ -226,17 +207,13 @@ function showCadetScreen() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('cadet-screen').classList.add('active');
 
-  // Update header
   document.getElementById('header-title').textContent = 'TCCC · Курсант';
   document.getElementById('header-screen-name').textContent = 'Панель управления';
 
-  // Update nav
   updateActiveNav('dashboard');
 
-  // Clean up instructor listeners if any
   cleanupInstructorListeners();
 
-  // Init cadet UI
   initCadetScreen();
 }
 
@@ -244,20 +221,16 @@ function showInstructorScreen() {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('instructor-screen').classList.add('active');
 
-  // Update header
   document.getElementById('header-title').textContent = 'TCCC · Командование';
   document.getElementById('header-screen-name').textContent = 'Панель инструктора';
 
-  // Update nav
   updateActiveNav('operations');
 
-  // Clean up cadet listeners
   if (cadetUnsubscribe) {
     cadetUnsubscribe();
     cadetUnsubscribe = null;
   }
 
-  // Init instructor UI
   initInstructorScreen();
 }
 
@@ -275,6 +248,13 @@ function showAuthScreen() {
 // Navigation helper
 function navigateTo(page) {
   if (!currentUserRole) return;
+
+  // Close sidebar on mobile after navigation
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+  }
+
   if (currentUserRole === 'cadet') {
     if (page === 'dashboard' || page === 'cadets') {
       showCadetScreen();
@@ -282,7 +262,6 @@ function navigateTo(page) {
   } else if (currentUserRole === 'instructor') {
     if (page === 'operations' || page === 'dashboard') {
       showInstructorScreen();
-      // Switch to cadets tab
       switchInstructorTab('cadets');
     } else if (page === 'cadets') {
       showInstructorScreen();
@@ -295,46 +274,35 @@ function navigateTo(page) {
 }
 
 function updateActiveNav(id) {
+  // Sidebar nav
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const el = document.getElementById('nav-' + id);
-  if (el) el.classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+
+  // Bottom nav
+  document.querySelectorAll('.bottom-nav-item').forEach(n => n.classList.remove('active'));
+  const bnEl = document.getElementById('bn-' + id);
+  if (bnEl) bnEl.classList.add('active');
 }
 
-// Connection status indicator
-function updateConnectionStatus(online) {
-  const dot = document.getElementById('conn-dot');
-  const status = document.getElementById('conn-status');
-  if (!dot || !status) return;
-
-  if (online) {
-    dot.className = 'status-dot';
-    status.textContent = 'ONLINE';
-    status.style.color = 'var(--accent)';
-  } else {
-    dot.className = 'status-dot disconnected';
-    status.textContent = 'OFFLINE';
-    status.style.color = 'var(--text-muted)';
+// Sidebar toggle for mobile
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar) {
+    sidebar.classList.toggle('open');
   }
 }
 
-// Update status bar database indicator
-function updateStatusBarIndicator(id, online) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'dot' + (online ? '' : ' offline');
-}
-
-// Status bar clock
-function startStatusClock() {
-  function tick() {
-    const now = new Date();
-    const time = now.toTimeString().split(' ')[0];
-    const el = document.getElementById('status-time');
-    if (el) el.textContent = time + ' UTC+5';
+// Close sidebar on tap outside (mobile)
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.getElementById('hamburger-btn');
+  if (sidebar && sidebar.classList.contains('open')) {
+    if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
   }
-  tick();
-  setInterval(tick, 1000);
-}
+});
 
 // Global cleanup on logout
 function cleanupListeners() {
@@ -345,7 +313,6 @@ function cleanupListeners() {
   cleanupInstructorListeners();
   document.body.classList.add('unauthenticated');
   document.getElementById('header-user').style.display = 'none';
-  updateConnectionStatus(false);
 }
 
 // Show error toast
@@ -357,20 +324,20 @@ function showError(msg) {
 
   const toast = document.createElement('div');
   toast.style.cssText = `
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
     background: rgba(255, 71, 87, 0.15);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    color: var(--danger, #ff4757);
-    padding: 12px 24px;
-    border-radius: 12px;
-    font-size: 0.82rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #ff4757;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 0.8rem;
     font-weight: 600;
     border: 1px solid rgba(255, 71, 87, 0.2);
     z-index: 300;
     text-align: center;
     max-width: 90%;
-    animation: fadeSlideUp 0.3s ease-out;
+    animation: fadeIn 0.25s ease-out;
     font-family: 'Inter', sans-serif;
   `;
   toast.textContent = msg;
@@ -386,25 +353,4 @@ function showError(msg) {
 // Wait for DOM ready, then build
 document.addEventListener('DOMContentLoaded', () => {
   buildAppShell();
-
-  // Firestore connection monitoring
-  if (db) {
-    db.collection('__health__').doc('ping').set({
-      ts: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-      updateStatusBarIndicator('sb-db', true);
-    }).catch(() => {
-      updateStatusBarIndicator('sb-db', false);
-    });
-  }
-
-  // Monitor auth state
-  if (auth) {
-    auth.onAuthStateChanged(user => {
-      updateStatusBarIndicator('sb-auth', !!user);
-    });
-  }
-
-  // If Firebase auth already has a session, the onAuthStateChanged in auth.js will handle it
-  // Otherwise the auth screen stays visible
 });

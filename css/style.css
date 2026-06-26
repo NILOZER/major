@@ -1,49 +1,94 @@
-/* ===== INTER FONT ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
+/* ===================================================================
+   TCCC — Tactical Command Center Console
+   Дизайн: гибрид Palantir Gotham × Starlink Mission Control × НАТО
+   Стек: чистый CSS (glassmorphism, HUD-элементы, микроанимации)
+   =================================================================== */
 
-/* ===== DESIGN TOKENS ===== */
+/* ----- ВЕКТОРНАЯ СЕТКА (фоновые линии) ----- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ===================================================================
+   1. ДИЗАЙН-ТОКЕНЫ
+   =================================================================== */
 :root {
-  --bg-primary: #1E2A22;
-  --bg-secondary: #23272F;
-  --bg-card: #2C323A;
-  --bg-card-hover: #333942;
-  --bg-input: #1A1E24;
-  --bg-overlay: rgba(0, 0, 0, 0.7);
+  /* ----- Фоны ----- */
+  --bg-deep: #080c14;
+  --bg-surface: rgba(17, 25, 45, 0.85);
+  --bg-elevated: rgba(26, 35, 60, 0.7);
+  --bg-glass: rgba(30, 41, 59, 0.3);
+  --bg-glass-hover: rgba(30, 41, 59, 0.45);
+  --bg-glass-active: rgba(0, 212, 170, 0.06);
+  --bg-glass-danger: rgba(255, 71, 87, 0.08);
+  --bg-input: rgba(17, 25, 45, 0.6);
 
-  --accent-red: #C73A3A;
-  --accent-red-hover: #D94A4A;
-  --accent-red-dark: #8A2B2B;
+  /* ----- Границы ----- */
+  --border-glass: rgba(148, 163, 184, 0.06);
+  --border-glass-hover: rgba(148, 163, 184, 0.12);
+  --border-glass-active: rgba(148, 163, 184, 0.2);
+  --border-accent: rgba(0, 212, 170, 0.25);
+  --border-accent-strong: rgba(0, 212, 170, 0.5);
+  --border-danger: rgba(255, 71, 87, 0.3);
+  --border-warning: rgba(255, 165, 2, 0.3);
 
-  --tactical-green: #4F7A57;
-  --tactical-green-hover: #5C8C65;
-  --tactical-green-dark: #3A5D3F;
+  /* ----- Акценты ----- */
+  --accent: #00d4aa;
+  --accent-hover: #00e6b5;
+  --accent-muted: rgba(0, 212, 170, 0.12);
+  --accent-glow: rgba(0, 212, 170, 0.12);
+  --accent-glow-strong: rgba(0, 212, 170, 0.25);
 
-  --amber: #D4A017;
-  --amber-hover: #E8B020;
-  --amber-dark: #A87C10;
+  --danger: #ff4757;
+  --danger-hover: #ff5e6b;
+  --danger-muted: rgba(255, 71, 87, 0.12);
+  --danger-glow: rgba(255, 71, 87, 0.15);
 
-  --text-primary: #E6E8EA;
-  --text-secondary: #8A8F94;
-  --text-muted: #6B7076;
+  --warning: #ffa502;
+  --warning-muted: rgba(255, 165, 2, 0.12);
 
-  --border-color: #3A4048;
-  --border-color-hover: #4A5058;
-  --border-active: #5A6068;
+  --info: #3b82f6;
+  --info-muted: rgba(59, 130, 246, 0.12);
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --success: #00d4aa;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  /* ----- Текст ----- */
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
 
-  --transition: 0.15s ease;
+  /* ----- Радиусы ----- */
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
 
+  /* ----- Тени ----- */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(148, 163, 184, 0.04);
+  --shadow-glass-lg: 0 16px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(148, 163, 184, 0.04);
+  --shadow-glow-accent: 0 0 30px rgba(0, 212, 170, 0.08);
+  --shadow-glow-danger: 0 0 30px rgba(255, 71, 87, 0.08);
+  --shadow-button: 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* ----- Анимации ----- */
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ----- Типографика ----- */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* ----- Layout ----- */
+  --sidebar-width: 248px;
+  --sidebar-collapsed: 64px;
+  --header-height: 56px;
+  --statusbar-height: 28px;
 }
 
-/* ===== RESET & BASE ===== */
+/* ===================================================================
+   2. СБРОС И БАЗА
+   =================================================================== */
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -53,280 +98,873 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  height: 100%;
 }
 
 body {
   font-family: var(--font-family);
-  background: var(--bg-primary);
+  background-color: var(--bg-deep);
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
   color: var(--text-primary);
   min-height: 100vh;
+  height: 100%;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  position: relative;
 }
 
-#app {
+/* Ambient glow — угловые засветки */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 10% 15%, rgba(0, 212, 170, 0.035) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 90% 85%, rgba(59, 130, 246, 0.025) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 400px at 80% 10%, rgba(255, 71, 87, 0.015) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===================================================================
+   3. LAYOUT — ГЛАВНАЯ СТРУКТУРА
+   =================================================================== */
+
+/* При неавторизованном состоянии — скрываем сайдбар и хедер */
+body.unauthenticated #sidebar,
+body.unauthenticated .main-wrapper > header,
+body.unauthenticated .status-bar {
+  display: none;
+}
+body.unauthenticated .main-wrapper {
+  margin-left: 0;
+  width: 100%;
+}
+body.unauthenticated #app {
   max-width: 480px;
   margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Основной лейаут: сайдбар + main-wrapper */
+body:not(.unauthenticated) {
+  display: flex;
+}
+
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.main-wrapper {
+  flex: 1;
+  margin-left: var(--sidebar-width);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
-/* ===== CARD ===== */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 12px;
-  transition: border-color var(--transition);
+#app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow-y: auto;
+  position: relative;
 }
 
-/* ===== BUTTONS ===== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 12px 20px;
-  border: 1px solid transparent;
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
-  width: 100%;
-  margin-bottom: 8px;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  letter-spacing: 0.3px;
-}
-
-.btn:active {
-  transform: scale(0.98);
-}
-
-.btn:focus-visible {
-  outline: 2px solid var(--accent-red);
-  outline-offset: 2px;
-}
-
-.btn-primary {
-  background: var(--accent-red);
-  color: #fff;
-  border-color: var(--accent-red);
-}
-
-.btn-primary:hover {
-  background: var(--accent-red-hover);
-  border-color: var(--accent-red-hover);
-}
-
-.btn-secondary {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border-color: var(--border-color);
-}
-
-.btn-secondary:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-color-hover);
-}
-
-.btn-success {
-  background: var(--tactical-green);
-  color: #fff;
-  border-color: var(--tactical-green);
-}
-
-.btn-success:hover {
-  background: var(--tactical-green-hover);
-  border-color: var(--tactical-green-hover);
-}
-
-.btn-warning {
-  background: var(--amber);
-  color: #fff;
-  border-color: var(--amber);
-}
-
-.btn-warning:hover {
-  background: var(--amber-hover);
-  border-color: var(--amber-hover);
-}
-
-.btn-danger {
-  background: var(--accent-red);
-  color: #fff;
-  border-color: var(--accent-red);
-}
-
-.btn-danger:hover {
-  background: var(--accent-red-hover);
-  border-color: var(--accent-red-hover);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-secondary);
-  border-color: transparent;
-}
-
-.btn-ghost:hover {
-  background: var(--bg-card);
-  color: var(--text-primary);
-}
-
-.btn-sm {
-  padding: 8px 14px;
-  font-size: 0.8rem;
-  width: auto;
-  margin: 0;
-}
-
-/* ===== SCREENS ===== */
 .screen {
   display: none;
   flex-direction: column;
   flex: 1;
-  padding: 16px;
+  padding: 20px 24px;
+  animation: fadeSlideUp 0.4s ease-out both;
 }
 
 .screen.active {
   display: flex;
 }
 
-.screen-header {
-  text-align: center;
-  padding: 16px 0;
-  margin-bottom: 16px;
-  position: relative;
+/* ===================================================================
+   4. САЙДБАР
+   =================================================================== */
+.sidebar {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 18, 34, 0.92);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-right: 1px solid rgba(148, 163, 184, 0.06);
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.4);
+  padding: 0;
+  user-select: none;
+  overflow: hidden;
 }
 
-.screen-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background: var(--accent-red);
-  border-radius: 2px;
+/* Верхняя секция — бренд */
+.sidebar-brand {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.06);
+  flex-shrink: 0;
 }
 
-.screen-header h1 {
-  font-size: 1.3rem;
+.sidebar-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.2), rgba(0, 212, 170, 0.05));
+  border: 1px solid rgba(0, 212, 170, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  color: var(--accent);
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.08);
+}
+
+.sidebar-logo-text {
+  line-height: 1.2;
+}
+
+.sidebar-title {
+  font-size: 0.95rem;
   font-weight: 800;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
   color: var(--text-primary);
 }
 
-.screen-header p {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  margin-top: 4px;
-  font-weight: 400;
+.sidebar-subtitle {
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-top: 1px;
 }
 
-/* ===== AUTH SCREEN ===== */
+/* Системный индикатор в бренде */
+.sidebar-sysinfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.sidebar-sysinfo .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow-strong);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.sidebar-sysinfo span {
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Навигация */
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 2px;
+}
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 4px;
+}
+
+.nav-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+  padding: 16px 12px 6px;
+  opacity: 0.6;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.nav-item:hover {
+  background: var(--bg-glass-hover);
+  color: var(--text-primary);
+  border-color: var(--border-glass-hover);
+}
+
+.nav-item:active {
+  transform: scale(0.97);
+}
+
+.nav-item .nav-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.nav-item:hover .nav-icon {
+  color: var(--text-secondary);
+}
+
+.nav-item.active {
+  background: var(--bg-glass-active);
+  border-color: var(--border-accent);
+  color: var(--accent);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 10px var(--accent-glow-strong);
+}
+
+.nav-item.active .nav-icon {
+  color: var(--accent);
+}
+
+/* Нижняя часть сайдбара */
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.06);
+  flex-shrink: 0;
+}
+
+.connection-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-xs);
+  background: rgba(0, 212, 170, 0.04);
+  border: 1px solid rgba(0, 212, 170, 0.08);
+}
+
+.connection-indicator .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow-strong);
+  animation: pulse-dot 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.connection-indicator .status-dot.disconnected {
+  background: var(--text-muted);
+  box-shadow: none;
+  animation: none;
+}
+
+.connection-indicator .status-dot.error {
+  background: var(--danger);
+  box-shadow: 0 0 8px var(--danger-glow);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+
+.connection-indicator .conn-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+
+.connection-indicator .conn-status {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
+/* ===================================================================
+   5. ХЕДЕР
+   =================================================================== */
+header {
+  height: var(--header-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(12, 18, 34, 0.6);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+}
+
+.header-breadcrumb {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(0, 212, 170, 0.06);
+  border: 1px solid rgba(0, 212, 170, 0.1);
+}
+
+.header-status .pulse-ring {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.header-status .pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  opacity: 0.4;
+  animation: ping 2s ease-out infinite;
+}
+
+.header-status .status-text {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.2), rgba(0, 212, 170, 0.05));
+  border: 1px solid rgba(0, 212, 170, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.header-user .user-name {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ===================================================================
+   6. СТАТУСНАЯ ПАНЕЛЬ (снизу)
+   =================================================================== */
+.status-bar {
+  height: var(--statusbar-height);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(8, 12, 20, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(148, 163, 184, 0.04);
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+  gap: 16px;
+}
+
+.status-bar .status-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-bar .status-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-bar .status-item .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 4px var(--accent-glow-strong);
+}
+
+.status-bar .status-item .dot.offline {
+  background: var(--text-muted);
+  box-shadow: none;
+}
+
+.status-time {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+/* ===================================================================
+   7. СТЕКЛЯННЫЕ КАРТОЧКИ
+   =================================================================== */
+.card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Микро-подсветка сверху на карточке */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.06), transparent);
+  pointer-events: none;
+}
+
+.card:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-hover);
+  box-shadow: var(--shadow-glass);
+  transform: translateY(-1px);
+}
+
+/* Стеклянная карточка с акцентной рамкой */
+.card-accent {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-glow-accent), var(--shadow-glass);
+}
+
+.card-accent::before {
+  background: linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.08), transparent);
+}
+
+/* Карточка опасности */
+.card-danger {
+  border-color: var(--border-danger);
+  box-shadow: var(--shadow-glow-danger), var(--shadow-glass);
+  background: var(--bg-glass-danger);
+}
+
+/* ===================================================================
+   8. КНОПКИ
+   =================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  width: 100%;
+  margin-bottom: 8px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  letter-spacing: 0.3px;
+  text-transform: none;
+  line-height: 1.4;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ripple-эффект через псевдоэлемент */
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+.btn:hover::after {
+  opacity: 1;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bg-deep), 0 0 0 4px var(--accent);
+}
+
+.btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Primary — акцентный (темы/сигнальные) */
+.btn-primary {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.05));
+  color: var(--accent);
+  border-color: var(--border-accent);
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.05);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.25), rgba(0, 212, 170, 0.1));
+  border-color: var(--border-accent-strong);
+  box-shadow: 0 0 30px rgba(0, 212, 170, 0.1), var(--shadow-button);
+  color: #fff;
+}
+
+/* Secondary — стеклянная */
+.btn-secondary {
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  border-color: var(--border-glass);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-hover);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-button);
+}
+
+/* Success */
+.btn-success {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.15), rgba(0, 212, 170, 0.05));
+  color: var(--accent);
+  border-color: var(--border-accent);
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.25), rgba(0, 212, 170, 0.1));
+  border-color: var(--border-accent-strong);
+  box-shadow: 0 0 30px rgba(0, 212, 170, 0.1), var(--shadow-button);
+  color: #fff;
+}
+
+/* Warning */
+.btn-warning {
+  background: linear-gradient(135deg, rgba(255, 165, 2, 0.15), rgba(255, 165, 2, 0.05));
+  color: var(--warning);
+  border-color: var(--border-warning);
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, rgba(255, 165, 2, 0.25), rgba(255, 165, 2, 0.1));
+  border-color: rgba(255, 165, 2, 0.4);
+  box-shadow: 0 0 30px rgba(255, 165, 2, 0.1), var(--shadow-button);
+  color: #fff;
+}
+
+/* Danger */
+.btn-danger {
+  background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 71, 87, 0.05));
+  color: var(--danger);
+  border-color: var(--border-danger);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, rgba(255, 71, 87, 0.25), rgba(255, 71, 87, 0.1));
+  border-color: rgba(255, 71, 87, 0.5);
+  box-shadow: 0 0 30px rgba(255, 71, 87, 0.1), var(--shadow-button);
+  color: #fff;
+}
+
+/* Ghost */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  border-color: var(--border-glass);
+}
+
+/* Small */
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 0.72rem;
+  width: auto;
+  margin: 0;
+  gap: 6px;
+}
+
+.btn-sm svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Icon button (круглая) */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-glass);
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-icon:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-hover);
+  color: var(--text-primary);
+}
+
+/* ===================================================================
+   9. ФОРМЫ И ИНПУТЫ
+   =================================================================== */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  color: var(--text-muted);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 0.88rem;
+  outline: none;
+  transition: all var(--transition);
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--border-accent);
+  background: rgba(17, 25, 45, 0.8);
+  box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.06), 0 0 20px rgba(0, 212, 170, 0.04);
+}
+
+.form-group select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.form-group select option {
+  background: #111827;
+  color: var(--text-primary);
+}
+
+/* ===================================================================
+   10. ЭКРАН АВТОРИЗАЦИИ
+   =================================================================== */
 #auth-screen {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 24px;
-  background: radial-gradient(ellipse at 50% 30%, rgba(199, 58, 58, 0.05) 0%, transparent 60%),
-              var(--bg-primary);
+  background: transparent;
+  animation: none;
 }
 
 .auth-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 32px 24px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
   width: 100%;
-  max-width: 380px;
-  box-shadow: var(--shadow-lg);
+  max-width: 400px;
+  box-shadow: var(--shadow-glass-lg), var(--shadow-glow-accent);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.6;
 }
 
 .auth-box h1 {
   text-align: center;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 900;
   text-transform: uppercase;
   margin-bottom: 2px;
-  color: var(--accent-red);
-  letter-spacing: 2px;
+  color: var(--text-primary);
+  letter-spacing: 3px;
   line-height: 1.2;
+}
+
+.auth-box .accent-text {
+  color: var(--accent);
 }
 
 .auth-box .subtitle {
   text-align: center;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  margin-bottom: 24px;
-  font-weight: 400;
-}
-
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 5px;
-  color: var(--text-secondary);
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background: var(--bg-input);
-  color: var(--text-primary);
-  font-family: var(--font-family);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
-}
-
-.form-group input::placeholder,
-.form-group select::placeholder {
   color: var(--text-muted);
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  border-color: var(--accent-red);
-  box-shadow: 0 0 0 3px rgba(199, 58, 58, 0.15);
-}
-
-.form-group select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238A8F94' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 32px;
+  font-size: 0.72rem;
+  margin-bottom: 28px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 .auth-toggle {
   text-align: center;
-  margin-top: 16px;
-  font-size: 0.82rem;
-  color: var(--text-secondary);
+  margin-top: 18px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
 }
 
 .auth-toggle a {
-  color: var(--accent-red);
+  color: var(--accent);
   cursor: pointer;
   text-decoration: none;
   font-weight: 600;
@@ -334,185 +972,216 @@ body {
 }
 
 .auth-toggle a:hover {
-  color: var(--accent-red-hover);
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 
 .error-msg {
-  background: rgba(199, 58, 58, 0.15);
-  color: var(--accent-red);
+  background: rgba(255, 71, 87, 0.1);
+  color: var(--danger);
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  font-size: 0.82rem;
-  margin-bottom: 12px;
+  font-size: 0.78rem;
+  margin-bottom: 14px;
   display: none;
   text-align: center;
-  border: 1px solid rgba(199, 58, 58, 0.3);
+  border: 1px solid rgba(255, 71, 87, 0.15);
   font-weight: 500;
 }
 
-/* ===== LOGOUT BUTTON ===== */
-.logout-btn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 50;
-  padding: 8px 14px;
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-family);
-  font-size: 0.72rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
-
-.logout-btn:hover {
-  background: var(--accent-red);
-  color: #fff;
-  border-color: var(--accent-red);
-}
-
-/* ===== CADET SCREEN ===== */
+/* ===================================================================
+   11. ЭКРАН КУРСАНТА
+   =================================================================== */
 #cadet-screen {
-  padding: 12px;
+  padding: 0;
+  gap: 12px;
 }
 
+.screen-header {
+  text-align: left;
+  padding: 0 0 4px;
+  margin-bottom: 8px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.screen-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--accent-glow-strong);
+}
+
+.screen-header h1 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
+}
+
+.screen-header p {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Бейдж статуса курсанта */
 .cadet-status-badge {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
+  gap: 12px;
   padding: 14px 20px;
   border-radius: var(--radius-md);
-  font-size: 1.1rem;
-  font-weight: 800;
+  font-size: 0.95rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 14px;
-  border: 1px solid transparent;
+  letter-spacing: 0.8px;
+  margin-bottom: 0;
+  transition: all var(--transition-slow);
 }
 
 .cadet-status-badge.healthy {
-  background: rgba(79, 122, 87, 0.2);
-  color: #6FCF87;
-  border-color: rgba(79, 122, 87, 0.4);
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--accent);
+  border: 1px solid rgba(0, 212, 170, 0.15);
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.05);
 }
 
 .cadet-status-badge.warning {
-  background: rgba(212, 160, 23, 0.2);
-  color: var(--amber);
-  border-color: rgba(212, 160, 23, 0.4);
+  background: rgba(255, 165, 2, 0.08);
+  color: var(--warning);
+  border: 1px solid rgba(255, 165, 2, 0.15);
+  box-shadow: 0 0 20px rgba(255, 165, 2, 0.05);
 }
 
 .cadet-status-badge.injured {
-  background: rgba(199, 58, 58, 0.2);
-  color: var(--accent-red);
-  border-color: rgba(199, 58, 58, 0.4);
+  background: rgba(255, 71, 87, 0.08);
+  color: var(--danger);
+  border: 1px solid rgba(255, 71, 87, 0.15);
+  box-shadow: 0 0 20px rgba(255, 71, 87, 0.05);
 }
 
 .cadet-status-badge.critical {
-  background: rgba(199, 58, 58, 0.35);
-  color: #FF6B6B;
-  border-color: rgba(199, 58, 58, 0.6);
+  background: rgba(255, 71, 87, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(255, 71, 87, 0.25);
+  box-shadow: 0 0 30px rgba(255, 71, 87, 0.1);
+  animation: statusPulseCritical 1.5s ease-in-out infinite;
 }
 
 .status-indicator {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
 
 .cadet-status-badge.healthy .status-indicator {
-  background: #6FCF87;
-  box-shadow: 0 0 8px rgba(79, 122, 87, 0.6);
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow-strong);
 }
 
 .cadet-status-badge.warning .status-indicator {
-  background: var(--amber);
-  box-shadow: 0 0 8px rgba(212, 160, 23, 0.6);
+  background: var(--warning);
+  box-shadow: 0 0 8px rgba(255, 165, 2, 0.5);
 }
 
 .cadet-status-badge.injured .status-indicator {
-  background: var(--accent-red);
-  box-shadow: 0 0 8px rgba(199, 58, 58, 0.6);
+  background: var(--danger);
+  box-shadow: 0 0 8px var(--danger-glow);
 }
 
 .cadet-status-badge.critical .status-indicator {
-  background: #FF6B6B;
-  box-shadow: 0 0 8px rgba(199, 58, 58, 0.8);
+  background: var(--danger);
+  box-shadow: 0 0 12px var(--danger-glow);
   animation: pulse-critical 1.2s ease-in-out infinite;
 }
 
-@keyframes pulse-critical {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.2); }
+.cadet-status-badge .badge-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
+/* Инструкция */
 .instruction-box {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--tactical-green);
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-left: 3px solid var(--accent);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-bottom: 14px;
-  transition: border-color var(--transition);
+  padding: 16px 20px;
+  margin-bottom: 0;
+  transition: all var(--transition);
+}
+
+.instruction-box:hover {
+  border-color: var(--border-glass-hover);
+  border-left-color: var(--accent);
 }
 
 .instruction-box .label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
   font-weight: 600;
 }
 
 .instruction-box .text {
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 500;
   color: var(--text-primary);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .instruction-box .empty {
   color: var(--text-muted);
   font-style: italic;
   font-weight: 400;
+  font-size: 0.85rem;
 }
 
-/* ===== SCENARIO INSTRUCTIONS ===== */
+/* Scenario box */
 .instruction-scenario-box {
-  background: var(--bg-card);
-  border: 1px solid var(--tactical-green);
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-accent);
   border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 14px;
+  padding: 18px 20px;
+  margin-bottom: 0;
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.03);
 }
 
 .instruction-scenario-box .label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  color: var(--tactical-green);
-  margin-bottom: 10px;
+  color: var(--accent);
+  margin-bottom: 12px;
   font-weight: 700;
 }
 
 .scenario-step {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   padding: 8px 0;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.88rem;
+  border-bottom: 1px solid var(--border-glass);
+  font-size: 0.82rem;
   line-height: 1.6;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .scenario-step:last-child {
@@ -523,95 +1192,102 @@ body {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
-  background: var(--tactical-green);
-  color: #fff;
+  background: rgba(0, 212, 170, 0.12);
+  color: var(--accent);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 800;
 }
 
-/* ===== CONTROL GRID ===== */
-.control-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.control-grid .btn {
-  margin: 0;
-}
-
-/* ===== MARCH STATE ===== */
+/* March state */
 .march-state {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
+  gap: 8px;
+  padding: 8px 18px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   border: 1px solid transparent;
   letter-spacing: 0.3px;
 }
 
 .march-state.moving {
-  background: rgba(79, 122, 87, 0.15);
-  color: #6FCF87;
-  border-color: rgba(79, 122, 87, 0.3);
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--accent);
+  border-color: rgba(0, 212, 170, 0.15);
 }
 
 .march-state.hold {
-  background: rgba(212, 160, 23, 0.15);
-  color: var(--amber);
-  border-color: rgba(212, 160, 23, 0.3);
+  background: rgba(255, 165, 2, 0.08);
+  color: var(--warning);
+  border-color: rgba(255, 165, 2, 0.15);
 }
 
 .march-state.separated {
-  background: rgba(199, 58, 58, 0.15);
-  color: var(--accent-red);
-  border-color: rgba(199, 58, 58, 0.3);
+  background: rgba(255, 71, 87, 0.08);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.15);
 }
 
 .march-state.stopped {
-  background: rgba(107, 112, 118, 0.2);
-  color: var(--text-secondary);
-  border-color: rgba(107, 112, 118, 0.3);
+  background: rgba(100, 116, 139, 0.08);
+  color: var(--text-muted);
+  border-color: rgba(100, 116, 139, 0.15);
 }
 
-/* ===== CADET RECOVER BUTTON ===== */
-#cadet-recover-btn {
-  margin-top: 4px;
+/* Сетка кнопок управления */
+.control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 0;
 }
 
-/* ===== PLATOON CHANGE (CADET) ===== */
+.control-grid .btn {
+  margin: 0;
+}
+
+/* Лейбл секции */
+.section-label-command {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  padding: 0;
+  opacity: 0.7;
+}
+
+/* Карточка смены взвода */
 .platoon-change-card {
-  margin-top: 14px;
+  margin-top: 0;
 }
 
 .cadet-platoon-info {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: var(--text-secondary);
   margin-bottom: 4px;
   padding: 8px 12px;
   background: var(--bg-input);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-glass);
 }
 
 .change-platoon-info {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   margin-bottom: 16px;
   padding: 12px;
   background: var(--bg-input);
   border-radius: var(--radius-sm);
   text-align: center;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-glass);
 }
 
 .change-platoon-info strong {
@@ -619,17 +1295,81 @@ body {
 }
 
 .change-platoon-capacity {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
   text-align: center;
   margin: 8px 0;
 }
 
-/* ===== BODY CHART ===== */
-.injury-modal-wide {
-  max-width: 540px;
+/* ===================================================================
+   12. МОДАЛЬНЫЕ ОКНА
+   =================================================================== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease-out both;
 }
 
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal {
+  background: rgba(17, 25, 45, 0.95);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-glass-lg);
+  animation: fadeSlideUp 0.3s ease-out both;
+}
+
+.modal h2 {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.modal .btn {
+  margin-top: 8px;
+}
+
+.modal::-webkit-scrollbar {
+  width: 3px;
+}
+.modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal::-webkit-scrollbar-thumb {
+  background: var(--border-glass);
+  border-radius: 4px;
+}
+
+/* Injury modal wide */
+.injury-modal-wide {
+  max-width: 560px;
+}
+
+/* ===================================================================
+   13. BODY CHART (анатомический силуэт)
+   =================================================================== */
 .body-chart-container-inmodal {
   position: relative;
   width: 100%;
@@ -651,18 +1391,18 @@ body {
 .body-chart-view-toggle {
   display: flex;
   gap: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   justify-content: center;
 }
 
 .view-toggle-btn {
   padding: 7px 20px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-glass);
   border-radius: 20px;
   background: var(--bg-input);
   color: var(--text-secondary);
   font-family: var(--font-family);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition);
@@ -671,76 +1411,33 @@ body {
 }
 
 .view-toggle-btn.active {
-  background: var(--accent-red);
-  border-color: var(--accent-red);
-  color: #fff;
+  background: var(--accent-muted);
+  border-color: var(--border-accent);
+  color: var(--accent);
 }
 
 .view-toggle-btn:hover:not(.active) {
-  border-color: var(--border-color-hover);
+  border-color: var(--border-glass-hover);
   color: var(--text-primary);
+  background: var(--bg-glass);
 }
 
-/* ===== MODAL ===== */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--bg-overlay);
-  z-index: 100;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  width: 100%;
-  max-width: 420px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-lg);
-}
-
-.modal h2 {
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 16px;
-  color: var(--accent-red);
-}
-
-.modal .btn {
-  margin-top: 8px;
-}
-
-/* ===== BODY MAP LABELS ===== */
+/* Body map labels (text under chart) */
 .body-map-labels {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 8px;
   justify-content: center;
-  margin-top: 8px;
+  margin-top: 10px;
   max-width: 100%;
 }
 
 .bml-label {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 600;
   color: var(--text-muted);
   padding: 3px 8px;
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--transition);
@@ -749,38 +1446,38 @@ body {
 
 .bml-label:hover {
   color: var(--text-primary);
-  border-color: var(--border-color);
+  border-color: var(--border-glass);
   background: var(--bg-input);
 }
 
 .bml-label.selected {
-  color: #fff;
-  background: var(--accent-red);
-  border-color: var(--accent-red);
+  color: var(--accent);
+  background: var(--accent-muted);
+  border-color: var(--border-accent);
 }
 
 .selected-part-display {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: var(--accent-red);
+  color: var(--accent);
   padding: 6px;
-  margin-top: 4px;
+  margin-top: 6px;
   min-height: 30px;
 }
 
-/* ===== INJURY SECTIONS ===== */
+/* Injury sections */
 .injury-section {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .injury-section .section-label {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
 }
 
 .injury-option-grid {
@@ -791,647 +1488,30 @@ body {
 
 .injury-opt {
   padding: 8px 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-glass);
   border-radius: var(--radius-sm);
   background: var(--bg-input);
   color: var(--text-secondary);
   font-family: var(--font-family);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition);
 }
 
 .injury-opt:hover {
-  border-color: var(--border-color-hover);
+  border-color: var(--border-glass-hover);
   color: var(--text-primary);
+  background: var(--bg-glass);
 }
 
 .injury-opt.selected {
-  background: var(--tactical-green);
-  border-color: var(--tactical-green);
-  color: #fff;
+  background: var(--accent-muted);
+  border-color: var(--border-accent);
+  color: var(--accent);
 }
 
-/* ===== INSTRUCTOR SCREEN ===== */
-#instructor-screen {
-  padding: 12px;
-}
-
-.instructor-tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 12px 16px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--text-muted);
-  font-family: var(--font-family);
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  cursor: pointer;
-  transition: all var(--transition);
-  margin-bottom: -1px;
-}
-
-.tab-btn:hover {
-  color: var(--text-secondary);
-}
-
-.tab-btn.active {
-  color: var(--accent-red);
-  border-bottom-color: var(--accent-red);
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-/* ===== INSTRUCTOR TOOLBAR ===== */
-.instructor-toolbar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-}
-
-.instructor-toolbar .btn {
-  flex: 1;
-  min-width: 80px;
-  margin: 0;
-  padding: 9px 12px;
-  font-size: 0.75rem;
-}
-
-/* ===== CADET LIST (INSTRUCTOR) ===== */
-.cadet-list {
-  flex: 1;
-}
-
-.cadet-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: border-color var(--transition), background var(--transition);
-  position: relative;
-  overflow: hidden;
-}
-
-.cadet-card:hover {
-  border-color: var(--border-color-hover);
-  background: var(--bg-card-hover);
-}
-
-.cadet-card:active {
-  transform: scale(0.99);
-}
-
-.cadet-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-}
-
-.cadet-card.healthy::before {
-  background: var(--tactical-green);
-}
-
-.cadet-card.warning::before {
-  background: var(--amber);
-}
-
-.cadet-card.injured::before {
-  background: var(--accent-red);
-}
-
-.cadet-card.critical::before {
-  background: #FF4444;
-  animation: pulse-border 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse-border {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.cadet-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.cadet-card-name {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.cadet-card-status {
-  font-size: 0.68rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid transparent;
-}
-
-.cadet-card-status.healthy {
-  background: rgba(79, 122, 87, 0.15);
-  color: #6FCF87;
-  border-color: rgba(79, 122, 87, 0.3);
-}
-
-.cadet-card-status.warning {
-  background: rgba(212, 160, 23, 0.15);
-  color: var(--amber);
-  border-color: rgba(212, 160, 23, 0.3);
-}
-
-.cadet-card-status.injured {
-  background: rgba(199, 58, 58, 0.15);
-  color: var(--accent-red);
-  border-color: rgba(199, 58, 58, 0.3);
-}
-
-.cadet-card-status.critical {
-  background: rgba(199, 58, 58, 0.3);
-  color: #FF6B6B;
-  border-color: rgba(199, 58, 58, 0.5);
-}
-
-.cadet-card-detail {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.cadet-card-instruction {
-  font-size: 0.78rem;
-  color: var(--tactical-green);
-  margin-top: 4px;
-  font-style: italic;
-  font-weight: 500;
-}
-
-/* ===== INSTRUCTOR DETAIL MODAL ===== */
-.cadet-detail-info {
-  margin-bottom: 14px;
-}
-
-.cadet-detail-info .row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.85rem;
-}
-
-.cadet-detail-info .row:last-child {
-  border-bottom: none;
-}
-
-.cadet-detail-info .row .label {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.cadet-detail-info .row .value {
-  font-weight: 600;
-  text-align: right;
-  color: var(--text-primary);
-}
-
-/* ===== INSTRUCT INPUT GROUP ===== */
-.instruct-input-group {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.instruct-input-group input {
-  flex: 1;
-  padding: 10px 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background: var(--bg-input);
-  color: var(--text-primary);
-  font-family: var(--font-family);
-  font-size: 0.85rem;
-  outline: none;
-  transition: border-color var(--transition);
-}
-
-.instruct-input-group input:focus {
-  border-color: var(--tactical-green);
-  box-shadow: 0 0 0 3px rgba(79, 122, 87, 0.15);
-}
-
-.instruct-input-group .btn {
-  width: auto;
-  margin: 0;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* ===== QUICK INSTRUCT ===== */
-.quick-instruct {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.quick-instruct .btn {
-  width: auto;
-  margin: 0;
-  font-size: 0.72rem;
-  padding: 6px 12px;
-}
-
-/* ===== STATUS CONTROL GRID ===== */
-.status-control-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.status-control-grid .btn {
-  margin: 0;
-  font-size: 0.8rem;
-  padding: 10px 8px;
-}
-
-/* ===== EVENTS LOG ===== */
-.events-log {
-  max-height: 180px;
-  overflow-y: auto;
-  font-size: 0.72rem;
-  background: var(--bg-input);
-  border-radius: var(--radius-sm);
-  padding: 8px;
-  margin-top: 12px;
-  border: 1px solid var(--border-color);
-}
-
-.events-log::-webkit-scrollbar {
-  width: 4px;
-}
-
-.events-log::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.events-log::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-.event-item {
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.event-item:last-child {
-  border-bottom: none;
-}
-
-/* ===== PLATOON MANAGEMENT ===== */
-.platoon-controls {
-  margin-bottom: 14px;
-}
-
-.platoon-list {
-  flex: 1;
-}
-
-.platoon-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--tactical-green);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 10px;
-  transition: border-color var(--transition);
-}
-
-.platoon-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-}
-
-.platoon-card-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--accent-red);
-}
-
-.platoon-card-desc {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
-}
-
-.platoon-card-meta {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-.platoon-card-cadets {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-color);
-}
-
-.platoon-card-actions {
-  margin-top: 4px;
-}
-
-/* ===== CAPACITY INDICATORS ===== */
-.capacity-full {
-  color: var(--accent-red);
-  font-weight: 700;
-}
-
-.capacity-warning {
-  color: var(--amber);
-  font-weight: 700;
-}
-
-/* ===== PLATOON CADET ROW ===== */
-.platoon-cadet-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.platoon-cadet-row:last-child {
-  border-bottom: none;
-}
-
-.platoon-cadet-name {
-  flex: 1;
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: color var(--transition);
-}
-
-.platoon-cadet-name:hover {
-  color: var(--accent-red);
-}
-
-.platoon-cadet-status {
-  font-size: 0.62rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid transparent;
-}
-
-.platoon-cadet-status.healthy {
-  background: rgba(79, 122, 87, 0.15);
-  color: #6FCF87;
-  border-color: rgba(79, 122, 87, 0.3);
-}
-
-.platoon-cadet-status.warning {
-  background: rgba(212, 160, 23, 0.15);
-  color: var(--amber);
-  border-color: rgba(212, 160, 23, 0.3);
-}
-
-.platoon-cadet-status.injured {
-  background: rgba(199, 58, 58, 0.15);
-  color: var(--accent-red);
-  border-color: rgba(199, 58, 58, 0.3);
-}
-
-.platoon-cadet-status.critical {
-  background: rgba(199, 58, 58, 0.3);
-  color: #FF6B6B;
-  border-color: rgba(199, 58, 58, 0.5);
-}
-
-/* ===== PLATOON GROUP (expandable) ===== */
-.platoon-group {
-  margin-bottom: 8px;
-}
-
-.platoon-group-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: border-color var(--transition), background var(--transition);
-  user-select: none;
-}
-
-.platoon-group-header:hover {
-  border-color: var(--border-color-hover);
-  background: var(--bg-card-hover);
-}
-
-.platoon-group-header:active {
-  transform: scale(0.99);
-}
-
-.platoon-group-header.expanded {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-bottom-color: transparent;
-}
-
-.platoon-group-toggle {
-  font-size: 0.75rem;
-  width: 20px;
-  text-align: center;
-  color: var(--accent-red);
-  flex-shrink: 0;
-  font-weight: 700;
-}
-
-.platoon-group-name {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  flex: 1;
-}
-
-.platoon-group-count {
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 20px;
-  background: var(--bg-input);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-color);
-  white-space: nowrap;
-}
-
-.platoon-group-count.platoon-warning {
-  background: rgba(212, 160, 23, 0.15);
-  color: var(--amber);
-  border-color: rgba(212, 160, 23, 0.3);
-}
-
-.platoon-group-count.platoon-full {
-  background: rgba(199, 58, 58, 0.15);
-  color: var(--accent-red);
-  border-color: rgba(199, 58, 58, 0.3);
-}
-
-.platoon-group-body {
-  background: var(--bg-input);
-  border: 1px solid var(--border-color);
-  border-top: none;
-  border-bottom-left-radius: var(--radius-md);
-  border-bottom-right-radius: var(--radius-md);
-  padding: 8px;
-}
-
-.platoon-group-body .cadet-card {
-  margin-bottom: 6px;
-  padding: 10px 12px;
-}
-
-.platoon-group-body .cadet-card:last-child {
-  margin-bottom: 0;
-}
-
-.platoon-group-empty {
-  text-align: center;
-  padding: 16px;
-  color: var(--text-muted);
-  font-style: italic;
-  font-size: 0.82rem;
-}
-
-/* ===== LOADING ===== */
-.loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  color: var(--text-secondary);
-  font-size: 0.92rem;
-  font-weight: 500;
-}
-
-.loading::after {
-  content: '';
-  width: 18px;
-  height: 18px;
-  margin-left: 10px;
-  border: 2px solid var(--border-color);
-  border-top-color: var(--accent-red);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ===== RESPONSIVE ===== */
-@media (min-width: 768px) {
-  #app {
-    max-width: 600px;
-  }
-
-  #instructor-screen {
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .cadet-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-}
-
-@media (max-width: 400px) {
-  .control-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .instructor-toolbar .btn {
-    min-width: 60px;
-    font-size: 0.7rem;
-    padding: 7px 8px;
-  }
-
-  .status-control-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* ===== SCROLLBAR (global) ===== */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-color-hover);
-}
-
-/* ===== SELECTION ===== */
-::selection {
-  background: rgba(199, 58, 58, 0.3);
-  color: var(--text-primary);
-}
-
-/* ===== FOCUS VISIBLE ===== */
-:focus-visible {
-  outline: 2px solid var(--accent-red);
-  outline-offset: 2px;
-}
-
-/* ===== BODY CHART (SVG) OVERRIDES ===== */
+/* Body chart SVG overrides */
 .body-map-container {
   position: relative;
   display: flex;
@@ -1449,20 +1529,893 @@ body {
 }
 
 .body-part {
-  fill: var(--bg-card);
-  stroke: var(--border-color);
+  fill: rgba(148, 163, 184, 0.04);
+  stroke: var(--border-glass);
   stroke-width: 1.5;
-  transition: fill 0.15s, stroke 0.15s;
+  transition: fill 0.2s, stroke 0.2s;
   cursor: pointer;
 }
 
 .body-part:hover {
-  fill: var(--bg-card-hover);
-  stroke: var(--accent-red);
+  fill: rgba(148, 163, 184, 0.08);
+  stroke: var(--accent);
 }
 
 .body-part.selected {
-  fill: var(--accent-red);
-  stroke: #fff;
+  fill: var(--accent-muted);
+  stroke: var(--accent);
   stroke-width: 2;
+}
+
+/* ===================================================================
+   14. ЭКРАН ИНСТРУКТОРА
+   =================================================================== */
+#instructor-screen {
+  padding: 0;
+  gap: 0;
+}
+
+/* Вкладки */
+.instructor-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover {
+  color: var(--text-secondary);
+}
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Toolbar фильтры */
+.instructor-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.instructor-toolbar .btn {
+  flex: 1;
+  min-width: 80px;
+  margin: 0;
+  padding: 8px 12px;
+  font-size: 0.68rem;
+}
+
+/* ===================================================================
+   15. КАРТОЧКА КУРСАНТА (У ИНСТРУКТОРА)
+   =================================================================== */
+.cadet-list {
+  flex: 1;
+}
+
+.cadet-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: fadeSlideUp 0.3s ease-out both;
+}
+
+.cadet-card:hover {
+  border-color: var(--border-glass-hover);
+  background: var(--bg-glass-hover);
+  transform: translateX(2px);
+}
+
+.cadet-card:active {
+  transform: scale(0.99);
+}
+
+.cadet-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+}
+
+.cadet-card.healthy::before {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow-strong);
+}
+
+.cadet-card.warning::before {
+  background: var(--warning);
+  box-shadow: 0 0 8px rgba(255, 165, 2, 0.4);
+}
+
+.cadet-card.injured::before {
+  background: var(--danger);
+  box-shadow: 0 0 8px var(--danger-glow);
+}
+
+.cadet-card.critical::before {
+  background: var(--danger);
+  box-shadow: 0 0 12px var(--danger-glow);
+  animation: pulse-border 1.2s ease-in-out infinite;
+}
+
+.cadet-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.cadet-card-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cadet-card-status {
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+
+.cadet-card-status.healthy {
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--accent);
+  border-color: rgba(0, 212, 170, 0.15);
+}
+
+.cadet-card-status.warning {
+  background: rgba(255, 165, 2, 0.08);
+  color: var(--warning);
+  border-color: rgba(255, 165, 2, 0.15);
+}
+
+.cadet-card-status.injured {
+  background: rgba(255, 71, 87, 0.08);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.15);
+}
+
+.cadet-card-status.critical {
+  background: rgba(255, 71, 87, 0.12);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.25);
+}
+
+.cadet-card-detail {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.cadet-card-instruction {
+  font-size: 0.72rem;
+  color: var(--accent);
+  margin-top: 4px;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Детальный просмотр курсанта (модалка) */
+.cadet-detail-info {
+  margin-bottom: 16px;
+}
+
+.cadet-detail-info .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-glass);
+  font-size: 0.82rem;
+}
+
+.cadet-detail-info .row:last-child {
+  border-bottom: none;
+}
+
+.cadet-detail-info .row .label {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.cadet-detail-info .row .value {
+  font-weight: 600;
+  text-align: right;
+  color: var(--text-primary);
+}
+
+/* Группа ввода инструкции */
+.instruct-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.instruct-input-group input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.instruct-input-group input:focus {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.06);
+}
+
+.instruct-input-group .btn {
+  width: auto;
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Быстрые инструкции (сценарии) */
+.quick-instruct {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.quick-instruct .btn {
+  width: auto;
+  margin: 0;
+  font-size: 0.65rem;
+  padding: 5px 10px;
+}
+
+/* Сетка смены статуса */
+.status-control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.status-control-grid .btn {
+  margin: 0;
+  font-size: 0.72rem;
+  padding: 8px 8px;
+}
+
+/* История событий */
+.events-log {
+  max-height: 180px;
+  overflow-y: auto;
+  font-size: 0.68rem;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-glass);
+}
+
+.events-log::-webkit-scrollbar {
+  width: 3px;
+}
+
+.events-log::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.events-log::-webkit-scrollbar-thumb {
+  background: var(--border-glass);
+  border-radius: 4px;
+}
+
+.event-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-glass);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+/* ===================================================================
+   16. ВЗВОДЫ
+   =================================================================== */
+.platoon-controls {
+  margin-bottom: 16px;
+}
+
+.platoon-list {
+  flex: 1;
+}
+
+.platoon-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 12px;
+  transition: all var(--transition);
+}
+
+.platoon-card:hover {
+  border-color: var(--border-glass-hover);
+  background: var(--bg-glass-hover);
+}
+
+.platoon-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.platoon-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.platoon-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.platoon-card-meta {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.platoon-card-cadets {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-glass);
+}
+
+.platoon-card-actions {
+  margin-top: 6px;
+}
+
+/* Ёмкость взвода */
+.capacity-full {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.capacity-warning {
+  color: var(--warning);
+  font-weight: 700;
+}
+
+/* Ряд курсанта внутри взвода */
+.platoon-cadet-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.platoon-cadet-row:last-child {
+  border-bottom: none;
+}
+
+.platoon-cadet-name {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.platoon-cadet-name:hover {
+  color: var(--accent);
+}
+
+.platoon-cadet-status {
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+}
+
+.platoon-cadet-status.healthy {
+  background: rgba(0, 212, 170, 0.08);
+  color: var(--accent);
+  border-color: rgba(0, 212, 170, 0.15);
+}
+
+.platoon-cadet-status.warning {
+  background: rgba(255, 165, 2, 0.08);
+  color: var(--warning);
+  border-color: rgba(255, 165, 2, 0.15);
+}
+
+.platoon-cadet-status.injured {
+  background: rgba(255, 71, 87, 0.08);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.15);
+}
+
+.platoon-cadet-status.critical {
+  background: rgba(255, 71, 87, 0.12);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.25);
+}
+
+/* Группа взвода (раскрывающийся список) */
+.platoon-group {
+  margin-bottom: 8px;
+}
+
+.platoon-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+
+.platoon-group-header:hover {
+  border-color: var(--border-glass-hover);
+  background: var(--bg-glass-hover);
+}
+
+.platoon-group-header:active {
+  transform: scale(0.99);
+}
+
+.platoon-group-header.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.platoon-group-toggle {
+  font-size: 0.65rem;
+  width: 20px;
+  text-align: center;
+  color: var(--accent);
+  flex-shrink: 0;
+  font-weight: 700;
+}
+
+.platoon-group-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.platoon-group-count {
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-glass);
+  white-space: nowrap;
+}
+
+.platoon-group-count.platoon-warning {
+  background: rgba(255, 165, 2, 0.08);
+  color: var(--warning);
+  border-color: rgba(255, 165, 2, 0.15);
+}
+
+.platoon-group-count.platoon-full {
+  background: rgba(255, 71, 87, 0.08);
+  color: var(--danger);
+  border-color: rgba(255, 71, 87, 0.15);
+}
+
+.platoon-group-body {
+  background: rgba(17, 25, 45, 0.4);
+  border: 1px solid var(--border-glass);
+  border-top: none;
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: var(--radius-md);
+  padding: 8px;
+}
+
+.platoon-group-body .cadet-card {
+  margin-bottom: 4px;
+  padding: 10px 12px;
+}
+
+.platoon-group-body .cadet-card:last-child {
+  margin-bottom: 0;
+}
+
+.platoon-group-empty {
+  text-align: center;
+  padding: 16px;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.78rem;
+}
+
+/* ===================================================================
+   17. ЛОУДЕР (загрузка)
+   =================================================================== */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+  border: 2px solid var(--border-glass);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* ===================================================================
+   18. КНОПКА ВЫХОДА (старый формат, сохранена совместимость)
+   =================================================================== */
+.logout-btn {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 50;
+  padding: 7px 14px;
+  background: var(--bg-glass);
+  color: var(--text-muted);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.logout-btn:hover {
+  background: var(--danger-muted);
+  color: var(--danger);
+  border-color: var(--border-danger);
+}
+
+/* ===================================================================
+   19. АНИМАЦИИ И КЛЮЧЕВЫЕ КАДРЫ
+   =================================================================== */
+
+/* Fade + slide up (появление экранов/элементов) */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Spin */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pulse for status indicator */
+@keyframes pulse-critical {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.3);
+  }
+}
+
+/* Pulse border animation */
+@keyframes pulse-border {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Pulse ring (header) */
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  75%, 100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Sidebar dot pulse */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Critical status background pulse */
+@keyframes statusPulseCritical {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(255, 71, 87, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(255, 71, 87, 0.18);
+  }
+}
+
+/* ===================================================================
+   20. СКРОЛЛБАР (глобальный)
+   =================================================================== */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.12);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+/* ===================================================================
+   21. ВЫДЕЛЕНИЕ ТЕКСТА
+   =================================================================== */
+::selection {
+  background: var(--accent-muted);
+  color: var(--text-primary);
+}
+
+/* ===================================================================
+   22. FOCUS VISIBLE
+   =================================================================== */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===================================================================
+   23. RESPONSIVE
+   =================================================================== */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 56px;
+  }
+
+  .sidebar-brand {
+    padding: 16px 12px 12px;
+  }
+
+  .sidebar-logo-row {
+    justify-content: center;
+  }
+
+  .sidebar-logo-text,
+  .sidebar-subtitle,
+  .sidebar-sysinfo,
+  .nav-label,
+  .nav-item span,
+  .sidebar-footer .conn-label,
+  .sidebar-footer .conn-status {
+    display: none;
+  }
+
+  .sidebar-nav {
+    padding: 8px 6px;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .nav-item .nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-item.active::before {
+    left: -6px;
+  }
+
+  .sidebar-footer {
+    padding: 8px;
+  }
+
+  .connection-indicator {
+    justify-content: center;
+    padding: 6px;
+  }
+
+  .screen {
+    padding: 14px 16px;
+  }
+
+  header {
+    padding: 0 14px;
+  }
+
+  .header-title {
+    font-size: 0.82rem;
+  }
+
+  .header-user .user-name {
+    display: none;
+  }
+
+  .header-status .status-text {
+    font-size: 0.6rem;
+  }
+
+  .status-bar {
+    padding: 0 12px;
+    font-size: 0.55rem;
+  }
+
+  .status-bar .status-group {
+    gap: 10px;
+  }
+
+  .status-time {
+    font-size: 0.6rem;
+  }
+
+  .control-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .instructor-toolbar .btn {
+    min-width: 60px;
+    font-size: 0.62rem;
+    padding: 6px 8px;
+  }
+
+  .status-control-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cadet-list {
+    grid-template-columns: 1fr;
+  }
+
+  .modal {
+    padding: 20px 16px;
+    max-width: 100%;
+    border-radius: var(--radius-md);
+  }
+
+  .auth-box {
+    padding: 28px 20px;
+  }
+
+  .auth-box h1 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .cadet-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .injury-option-grid {
+    gap: 4px;
+  }
+
+  .injury-opt {
+    padding: 6px 10px;
+    font-size: 0.68rem;
+  }
+
+  .quick-instruct .btn {
+    font-size: 0.6rem;
+    padding: 4px 8px;
+  }
+
+  .instruct-input-group {
+    flex-direction: column;
+  }
+
+  .instruct-input-group .btn {
+    width: 100%;
+  }
+
+  .cadet-card-status {
+    font-size: 0.55rem;
+    padding: 2px 8px;
+  }
 }

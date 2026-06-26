@@ -32,14 +32,6 @@ function buildAppShell() {
           <span class="nav-icon">&#x2699;</span>
           <span>Управление</span>
         </a>
-        <a class="nav-item" id="nav-cadets" onclick="navigateTo('cadets')">
-          <span class="nav-icon">&#x263A;</span>
-          <span>Личный состав</span>
-        </a>
-        <a class="nav-item" id="nav-platoons" onclick="navigateTo('platoons')">
-          <span class="nav-icon">&#x2630;</span>
-          <span>Взводы</span>
-        </a>
       </div>
       <div class="sidebar-footer">
         <div class="logout-item" onclick="logout()">
@@ -90,14 +82,6 @@ function buildAppShell() {
     <button class="bottom-nav-item" id="bn-operations" onclick="navigateTo('operations')">
       <span class="bn-icon">&#x2699;</span>
       <span class="bn-label">Управление</span>
-    </button>
-    <button class="bottom-nav-item" id="bn-cadets" onclick="navigateTo('cadets')">
-      <span class="bn-icon">&#x263A;</span>
-      <span class="bn-label">Состав</span>
-    </button>
-    <button class="bottom-nav-item" id="bn-platoons" onclick="navigateTo('platoons')">
-      <span class="bn-icon">&#x2630;</span>
-      <span class="bn-label">Взводы</span>
     </button>
   `;
   document.body.appendChild(bottomNav);
@@ -232,6 +216,9 @@ function showInstructorScreen() {
   }
 
   initInstructorScreen();
+
+  // Default to management tab when navigating from sidebar
+  switchInstructorTab('management');
 }
 
 function showAuthScreen() {
@@ -262,13 +249,8 @@ function navigateTo(page) {
   } else if (currentUserRole === 'instructor') {
     if (page === 'operations' || page === 'dashboard') {
       showInstructorScreen();
-      switchInstructorTab('cadets');
-    } else if (page === 'cadets') {
-      showInstructorScreen();
-      switchInstructorTab('cadets');
-    } else if (page === 'platoons') {
-      showInstructorScreen();
-      switchInstructorTab('platoons');
+      // Default to management tab
+      switchInstructorTab('management');
     }
   }
 }

@@ -29,12 +29,14 @@ function initInstructorScreen() {
     </div>
 
     <div class="instructor-tabs">
-      <button class="tab-btn active" data-tab="cadets" onclick="switchInstructorTab('cadets')">Курсанты</button>
+      <button class="tab-btn active" data-tab="management" onclick="switchInstructorTab('management')">Управление</button>
       <button class="tab-btn" data-tab="platoons" onclick="switchInstructorTab('platoons')">Взводы</button>
+      <button class="tab-btn" data-tab="training" onclick="switchInstructorTab('training')">Обучение</button>
     </div>
 
-    <!-- CADETS TAB -->
-    <div id="tab-cadets" class="tab-content active">
+    <!-- MANAGEMENT TAB (cadets live here) -->
+    <div id="tab-management" class="tab-content active">
+      <div class="section-subtitle">Курсанты</div>
       <div class="instructor-toolbar">
         <button class="btn btn-secondary btn-sm" onclick="showAllCadets()">Все</button>
         <button class="btn btn-success btn-sm" onclick="filterCadets('healthy')">Здоровы</button>
@@ -55,6 +57,17 @@ function initInstructorScreen() {
       </div>
       <div id="platoon-list" class="platoon-list">
         <div class="loading">Загрузка взводов</div>
+      </div>
+    </div>
+
+    <!-- TRAINING TAB (placeholder) -->
+    <div id="tab-training" class="tab-content">
+      <div class="training-placeholder">
+        <div class="training-placeholder-icon">🎓</div>
+        <h2 class="training-placeholder-title">Раздел "Обучение" находится в разработке.</h2>
+        <p class="training-placeholder-text">
+          В ближайших обновлениях здесь появится полноценная система обучения по тактической медицине, включающая теоретические материалы, практические занятия, тестирование и контроль прогресса курсантов.
+        </p>
       </div>
     </div>
   `;

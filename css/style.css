@@ -1264,6 +1264,59 @@ header {
 }
 
 /* ===================================================================
+   14.1. ЗАГОЛОВОК ПОДРАЗДЕЛА
+   =================================================================== */
+.section-subtitle {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+/* ===================================================================
+   14.2. ЗАГЛУШКА ОБУЧЕНИЯ
+   =================================================================== */
+.training-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  margin-top: 8px;
+  animation: slideUp 0.3s ease both;
+}
+
+.training-placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.training-placeholder-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+
+.training-placeholder-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 420px;
+  font-weight: 400;
+}
+
+/* ===================================================================
    15. КАРТОЧКА КУРСАНТА
    =================================================================== */
 .cadet-list {

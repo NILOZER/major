@@ -269,22 +269,54 @@ function navigateTo(page) {
   }
 
   if (currentUserRole === 'cadet') {
-    if (page === 'dashboard' || page === 'training') {
-      // Training shows same screen (cadet screen), just update header
-      if (page === 'training') {
-        document.getElementById('header-title').textContent = 'TCCC · Курсант';
-        document.getElementById('header-screen-name').textContent = 'Обучение';
-        updateActiveNav('training');
-        return;
-      }
+    if (page === 'dashboard') {
       showCadetScreen();
+    } else if (page === 'training') {
+      showCadetTraining();
     }
   } else if (currentUserRole === 'instructor') {
-    if (page === 'management' || page === 'platoons' || page === 'training') {
+    if (page === 'management' || page === 'platoons') {
       showInstructorScreen();
       switchInstructorPage(page);
+    } else if (page === 'training') {
+      showInstructorTraining();
     }
   }
+}
+
+// Show training for cadet (replaces cadet screen content)
+function showCadetTraining() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('cadet-screen').classList.add('active');
+
+  document.getElementById('header-title').textContent = 'TCCC · Курсант';
+  document.getElementById('header-screen-name').textContent = 'Обучение';
+
+  applyRoleVisibility('cadet');
+  updateActiveNav('training');
+
+  cleanupInstructorListeners();
+
+  initTrainingScreen();
+}
+
+// Show training for instructor (replaces instructor screen content)
+function showInstructorTraining() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('instructor-screen').classList.add('active');
+
+  document.getElementById('header-title').textContent = 'TCCC · Командование';
+  document.getElementById('header-screen-name').textContent = 'Обучение';
+
+  applyRoleVisibility('instructor');
+  updateActiveNav('training');
+
+  if (cadetUnsubscribe) {
+    cadetUnsubscribe();
+    cadetUnsubscribe = null;
+  }
+
+  initTrainingScreen();
 }
 
 function updateActiveNav(id) {

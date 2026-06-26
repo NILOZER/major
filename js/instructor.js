@@ -54,16 +54,8 @@ function initInstructorScreen() {
       </div>
     </div>
 
-    <!-- TRAINING TAB (placeholder) -->
-    <div id="tab-training" class="tab-content">
-      <div class="training-placeholder">
-        <div class="training-placeholder-icon">🎓</div>
-        <h2 class="training-placeholder-title">Раздел "Обучение" находится в разработке.</h2>
-        <p class="training-placeholder-text">
-          В ближайших обновлениях здесь появится полноценная система обучения по тактической медицине, включающая теоретические материалы, практические занятия, тестирование и контроль прогресса курсантов.
-        </p>
-      </div>
-    </div>
+    <!-- TRAINING TAB (handled by training.js) -->
+    <div id="tab-training" class="tab-content"></div>
   `;
 
   // Build modals
